@@ -20,10 +20,16 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Frontend et dashboard hébergés en static sites *.onrender.com ;
-# CORS_ALLOWED_ORIGINS permet d'ajouter un domaine custom.
+# Origines autorisées à appeler l'API depuis un navigateur (dashboard admin, etc.).
+# Le dashboard peut être hébergé sur Render, Vercel ou Netlify → on autorise ces
+# domaines. CORS_ALLOWED_ORIGINS permet d'ajouter un domaine custom. L'API utilise
+# des JWT (localStorage, pas de cookies), donc élargir le CORS reste sûr.
 CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
-CORS_ALLOWED_ORIGIN_REGEXES = [r'^https://[\w-]+\.onrender\.com$']
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://[\w-]+\.onrender\.com$',
+    r'^https://[\w-]+\.vercel\.app$',
+    r'^https://[\w-]+\.netlify\.app$',
+]
 
 CSRF_TRUSTED_ORIGINS = [f"https://{h}" for h in ALLOWED_HOSTS]
 
