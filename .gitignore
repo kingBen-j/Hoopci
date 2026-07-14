@@ -1,0 +1,34 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+backend/staticfiles/
+backend/media/
+backend/logs/
+backend/db.sqlite3
+
+# Node / React
+node_modules/
+frontend/dist/
+admin-dashboard/dist/
+frontend/.env.local
+admin-dashboard/.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Celery
+celerybeat-schedule
+celerybeat.pid

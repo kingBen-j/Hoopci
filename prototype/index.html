@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0D0D0D">
+<title>HoopCI — La plateforme du street basket ivoirien</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,600;0,700;0,800;1,600;1,700;1,800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   HoopCI — Prototype v1.1 · Design inspiré FIBA 3x3
+   Couleurs : drapeau de Côte d'Ivoire
+   Orange #F87306 (logo) · Blanc #FFFFFF · Vert #009E60
+   ============================================================ */
+:root{
+  --orange:#F87306;
+  --orange-dark:#C55A02;
+  --green:#009E60;
+  --green-dark:#007447;
+  --white:#FFFFFF;
+  --black:#0D0D0D;
+  --bg:#111111;
+  --card:#1A1A1A;
+  --card2:#212121;
+  --line:#2C2C2C;
+  --txt:#F4F4F4;
+  --muted:#9A9A9A;
+  --red:#E23B3B;
+  --yellow:#F2B705;
+  --cond:'Barlow Condensed', 'Arial Narrow', Impact, sans-serif;
+  --body:'Barlow', Arial, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:#000;
+  color:var(--txt);
+  font-size:15px;
+  line-height:1.45;
+}
+/* Cadre téléphone (mobile-first, centré sur desktop) */
+.phone{
+  max-width:430px;margin:0 auto;min-height:100dvh;
+  background:var(--bg);position:relative;
+  box-shadow:0 0 60px rgba(248,115,6,.12);
+  overflow-x:hidden;
+}
+main{padding-bottom:86px;min-height:calc(100dvh - 56px)}
+
+/* ---------- Typo FIBA 3x3 : condensé, italique, majuscules ---------- */
+h1,h2,h3,.display{
+  font-family:var(--cond);text-transform:uppercase;
+  font-style:italic;font-weight:800;letter-spacing:.2px;line-height:1.02;
+}
+.section-title{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--cond);font-style:italic;font-weight:800;
+  text-transform:uppercase;font-size:22px;margin:22px 16px 12px;
+}
+.section-title::after{content:'';flex:1;height:3px;
+  background:linear-gradient(90deg,var(--orange) 33%,var(--white) 33% 66%,var(--green) 66%);}
+
+/* Bandeau tricolore CIV — signature graphique */
+.tricolor{height:4px;background:linear-gradient(90deg,var(--orange) 33.3%,var(--white) 33.3% 66.6%,var(--green) 66.6%)}
+
+/* Éléments inclinés (skew) façon 3x3 */
+.skew{transform:skewX(-10deg)}
+.skew>*{transform:skewX(10deg);display:inline-block}
+
+/* ---------- Barre supérieure ---------- */
+.topbar{
+  position:sticky;top:0;z-index:50;height:56px;
+  background:var(--black);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;
+}
+.brand{display:flex;align-items:center;gap:9px;cursor:pointer}
+.logo-plate{
+  background:var(--white);transform:skewX(-10deg);
+  padding:3px 8px;border-radius:2px;box-shadow:2px 2px 0 var(--orange);
+}
+.logo-plate img{height:32px;display:block;transform:skewX(10deg)}
+.brand b{
+  font-family:var(--cond);font-style:italic;font-weight:800;font-size:24px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.brand b span{color:var(--orange)}
+.brand b .ci{color:var(--green)}
+.top-actions{display:flex;align-items:center;gap:6px}
+.icon-btn{
+  position:relative;width:40px;height:40px;border:1px solid var(--line);
+  background:var(--card);color:var(--txt);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;
+}
+.badge-dot{
+  position:absolute;top:6px;right:6px;min-width:16px;height:16px;
+  background:var(--orange);color:#fff;border-radius:8px;
+  font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  padding:0 4px;
+}
+
+/* ---------- Héro (accueil) ---------- */
+.hero{
+  position:relative;padding:26px 16px 34px;
+  background:
+    radial-gradient(120% 90% at 85% 0%, rgba(248,115,6,.28), transparent 55%),
+    radial-gradient(100% 80% at 0% 100%, rgba(0,158,96,.22), transparent 55%),
+    var(--black);
+  clip-path:polygon(0 0,100% 0,100% 92%,0 100%);
+  border-bottom:none;
+}
+.hero .kicker{
+  display:inline-block;background:var(--green);color:#fff;
+  font-family:var(--cond);font-style:italic;font-weight:700;font-size:13px;
+  text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;
+  transform:skewX(-10deg);margin-bottom:12px;
+}
+.hero h1{font-size:42px}
+.hero h1 .o{color:var(--orange)}
+.hero p{color:var(--muted);margin:10px 0 16px;max-width:320px;font-size:14px}
+.hero .cta-row{display:flex;gap:10px}
+
+/* ---------- Boutons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--cond);font-style:italic;font-weight:700;font-size:17px;
+  text-transform:uppercase;letter-spacing:.8px;
+  padding:11px 20px;border:none;cursor:pointer;color:#fff;
+  background:var(--orange);transform:skewX(-10deg);
+  box-shadow:3px 3px 0 rgba(255,255,255,.18);
+  transition:filter .15s, transform .1s;
+}
+.btn>span{display:inline-block;transform:skewX(10deg)}
+.btn:active{transform:skewX(-10deg) translateY(2px);box-shadow:1px 1px 0 rgba(255,255,255,.18)}
+.btn.green{background:var(--green)}
+.btn.ghost{background:transparent;border:2px solid var(--white);box-shadow:none}
+.btn.dark{background:var(--card2);border:1px solid var(--line);box-shadow:none}
+.btn.red{background:var(--red)}
+.btn.block{display:flex;width:calc(100% - 8px);margin:0 auto}
+.btn.sm{font-size:14px;padding:7px 14px}
+
+/* ---------- Filtres ---------- */
+.filters{display:flex;gap:8px;overflow-x:auto;padding:14px 16px 4px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+select.chip, .chip{
+  flex-shrink:0;appearance:none;background:var(--card);color:var(--txt);
+  border:1px solid var(--line);border-radius:0;
+  font-family:var(--cond);font-weight:600;font-size:15px;text-transform:uppercase;
+  padding:8px 14px;cursor:pointer;transform:skewX(-10deg);
+}
+.chip.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.seg{display:flex;gap:0;margin:6px 0}
+.seg button{
+  flex:1;padding:10px 6px;background:var(--card);border:1px solid var(--line);
+  color:var(--muted);font-family:var(--cond);font-weight:700;font-size:16px;
+  text-transform:uppercase;font-style:italic;cursor:pointer;
+}
+.seg button.active{background:var(--orange);color:#fff;border-color:var(--orange)}
+
+/* ---------- Cartes tournoi ---------- */
+.cards{display:flex;flex-direction:column;gap:14px;padding:10px 16px}
+.t-card{
+  background:var(--card);border:1px solid var(--line);cursor:pointer;
+  overflow:hidden;position:relative;
+}
+.t-cover{
+  height:120px;position:relative;display:flex;align-items:flex-end;
+  padding:12px;overflow:hidden;
+}
+.t-cover .big{
+  position:absolute;right:-6px;top:-14px;
+  font-family:var(--cond);font-style:italic;font-weight:800;font-size:92px;
+  color:rgba(255,255,255,.10);text-transform:uppercase;white-space:nowrap;
+}
+.t-cover h3{font-size:26px;position:relative;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.g1{background:linear-gradient(120deg,#7A3A00 0%,var(--orange) 100%)}
+.g2{background:linear-gradient(120deg,#00331F 0%,var(--green) 100%)}
+.g3{background:linear-gradient(120deg,#232323 0%,#5A5A5A 100%)}
+.g4{background:linear-gradient(120deg,#4A1D00 0%,#A34E00 100%)}
+.g5{background:linear-gradient(120deg,#013A26 0%,#02734A 100%)}
+.t-body{padding:12px;display:flex;flex-direction:column;gap:8px}
+.t-meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:13px}
+.t-meta b{color:var(--txt);font-weight:600}
+.t-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px dashed var(--line);padding-top:10px}
+.price{font-family:var(--cond);font-style:italic;font-weight:800;font-size:19px;color:var(--orange)}
+.price small{color:var(--muted);font-size:12px;font-style:normal;font-family:var(--body);font-weight:400}
+
+/* Badges de statut */
+.status{
+  display:inline-block;font-family:var(--cond);font-style:italic;font-weight:700;
+  font-size:12.5px;text-transform:uppercase;letter-spacing:.8px;
+  padding:3px 10px;transform:skewX(-10deg);color:#fff;
+}
+.status>span{display:inline-block;transform:skewX(10deg)}
+.st-ouvert{background:var(--green)}
+.st-complet{background:var(--yellow);color:#111}
+.st-en_cours{background:var(--orange)}
+.st-termine{background:#4A4A4A}
+.st-annule{background:var(--red)}
+.fmt{
+  display:inline-block;font-family:var(--cond);font-weight:800;font-style:italic;
+  font-size:13px;border:1.5px solid var(--orange);color:var(--orange);
+  padding:2px 8px;transform:skewX(-10deg)
+}
+.fav{
+  position:absolute;top:10px;right:10px;z-index:2;width:36px;height:36px;
+  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);
+  color:#fff;font-size:17px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.fav.on{color:var(--orange);border-color:var(--orange)}
+
+/* ---------- Sponsors ---------- */
+.sponsors{display:flex;gap:10px;overflow-x:auto;padding:6px 16px 22px;scrollbar-width:none}
+.sponsors::-webkit-scrollbar{display:none}
+.sponsor{
+  flex-shrink:0;background:var(--card);border:1px dashed var(--line);
+  color:var(--muted);font-family:var(--cond);font-style:italic;font-weight:700;
+  text-transform:uppercase;font-size:15px;padding:16px 22px;transform:skewX(-10deg);
+}
+.sponsor>span{display:inline-block;transform:skewX(10deg)}
+
+/* ---------- Détail tournoi ---------- */
+.detail-cover{height:190px;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;clip-path:polygon(0 0,100% 0,100% 90%,0 100%)}
+.detail-cover h2{font-size:34px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+.back{
+  position:absolute;top:12px;left:12px;z-index:3;width:38px;height:38px;
+  background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.3);color:#fff;
+  border-radius:50%;font-size:18px;cursor:pointer;
+}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px}
+.info-tile{background:var(--card);border:1px solid var(--line);padding:10px 12px}
+.info-tile .lbl{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:2px}
+.info-tile .val{font-family:var(--cond);font-weight:700;font-size:18px;font-style:italic}
+.panel{background:var(--card);border:1px solid var(--line);margin:8px 16px;padding:14px}
+.panel h3{font-size:19px;margin-bottom:8px;color:var(--orange)}
+.map-ph{
+  height:130px;margin:8px 16px;border:1px dashed var(--line);
+  background:
+    linear-gradient(rgba(0,158,96,.06),rgba(0,158,96,.06)),
+    repeating-linear-gradient(0deg,transparent,transparent 19px,var(--line) 20px),
+    repeating-linear-gradient(90deg,transparent,transparent 19px,var(--line) 20px),
+    var(--card);
+  display:flex;align-items:center;justify-content:center;color:var(--muted);
+  font-size:13px;position:relative;
+}
+.pin{position:absolute;font-size:26px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5))}
+.progress{height:8px;background:var(--card2);border:1px solid var(--line);margin-top:6px}
+.progress i{display:block;height:100%;background:var(--green)}
+
+/* ---------- Classement / résultats ---------- */
+.rank-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.rank-row:last-child{border-bottom:none}
+.rank-num{
+  width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--cond);font-style:italic;font-weight:800;font-size:18px;
+  background:var(--card2);border:1px solid var(--line);transform:skewX(-10deg);
+}
+.rank-num>span{transform:skewX(10deg)}
+.rank-1 .rank-num{background:var(--orange);border-color:var(--orange)}
+.rank-2 .rank-num{background:#5A5A5A}
+.rank-3 .rank-num{background:#3A2A18}
+.mvp-band{
+  margin-top:12px;background:linear-gradient(90deg,rgba(248,115,6,.18),transparent);
+  border-left:4px solid var(--orange);padding:10px 12px;display:flex;align-items:center;gap:12px;
+}
+
+/* ---------- Joueurs ---------- */
+.p-card{
+  display:flex;gap:12px;background:var(--card);border:1px solid var(--line);
+  padding:12px;cursor:pointer;position:relative;overflow:hidden;
+}
+.p-card.boost{border-color:var(--orange);box-shadow:inset 0 0 0 1px var(--orange)}
+.boost-tag{
+  position:absolute;top:0;right:0;background:var(--orange);color:#fff;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  padding:3px 8px;
+}
+.avatar{
+  width:58px;height:58px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--cond);font-style:italic;font-weight:800;font-size:21px;color:#fff;
+  background:linear-gradient(135deg,var(--orange),var(--orange-dark));
+  border:2px solid rgba(255,255,255,.25);
+}
+.avatar.grn{background:linear-gradient(135deg,var(--green),var(--green-dark))}
+.avatar.dark{background:#333}
+.avatar.lg{width:86px;height:86px;font-size:30px}
+.p-main{flex:1;min-width:0}
+.p-name{font-family:var(--cond);font-style:italic;font-weight:800;font-size:19px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.vbadge{color:var(--green);font-size:15px}
+.p-sub{color:var(--muted);font-size:12.5px;margin:1px 0 7px}
+.winbar{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.winbar .bar{flex:1;height:6px;background:var(--card2);border:1px solid var(--line)}
+.winbar .bar i{display:block;height:100%;background:var(--green)}
+.winbar b{color:var(--green);font-family:var(--cond);font-size:15px;font-style:italic}
+.dispo-pill{
+  display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;padding:2px 8px;border-radius:10px;
+  background:rgba(0,158,96,.15);color:var(--green);border:1px solid var(--green);
+}
+.restreint{
+  background:rgba(255,255,255,.05);border:1px dashed var(--line);
+  color:var(--muted);font-size:11px;padding:2px 8px;border-radius:10px;
+}
+
+/* Profil public */
+.profile-head{
+  position:relative;padding:24px 16px 18px;
+  background:
+    radial-gradient(100% 100% at 100% 0%, rgba(0,158,96,.25), transparent 60%),
+    radial-gradient(100% 100% at 0% 100%, rgba(248,115,6,.25), transparent 60%),
+    var(--black);
+  clip-path:polygon(0 0,100% 0,100% 88%,0 100%);
+  display:flex;gap:14px;align-items:center;
+}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px 16px 4px}
+.stat{
+  background:var(--card);border:1px solid var(--line);text-align:center;padding:12px 4px;
+  position:relative;overflow:hidden;
+}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--orange)}
+.stat:nth-child(2)::before{background:var(--white)}
+.stat:nth-child(3)::before{background:var(--green)}
+.stat:nth-child(4)::before{background:var(--yellow)}
+.stat b{font-family:var(--cond);font-style:italic;font-weight:800;font-size:26px;display:block}
+.stat span{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+
+/* ---------- Formulaires ---------- */
+.form{display:flex;flex-direction:column;gap:13px;padding:16px}
+.field label{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:5px;font-weight:600}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--card);border:1px solid var(--line);color:var(--txt);
+  padding:12px;font-family:var(--body);font-size:15px;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.field textarea{resize:vertical;min-height:70px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.role-card{
+  background:var(--card);border:1px solid var(--line);padding:14px 6px;text-align:center;
+  cursor:pointer;transition:border-color .15s;
+}
+.role-card .ic{font-size:24px;display:block;margin-bottom:6px}
+.role-card b{font-family:var(--cond);font-style:italic;text-transform:uppercase;font-size:15px}
+.role-card p{font-size:10px;color:var(--muted);margin-top:3px}
+.role-card.active{border-color:var(--orange);background:rgba(248,115,6,.1)}
+.alert{
+  border-left:4px solid var(--yellow);background:rgba(242,183,5,.08);
+  padding:12px;font-size:13px;color:#E8D9A8;
+}
+.alert.green{border-color:var(--green);background:rgba(0,158,96,.08);color:#A8D9C4}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--muted);cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;margin-top:1px}
+.tabs{display:flex;border-bottom:2px solid var(--line);margin:0 16px}
+.tabs button{
+  flex:1;background:none;border:none;color:var(--muted);padding:13px 4px;cursor:pointer;
+  font-family:var(--cond);font-style:italic;font-weight:700;font-size:18px;text-transform:uppercase;
+  border-bottom:3px solid transparent;margin-bottom:-2px;
+}
+.tabs button.active{color:var(--orange);border-bottom-color:var(--orange)}
+
+/* ---------- Offres / notifications ---------- */
+.o-card{background:var(--card);border:1px solid var(--line);padding:13px;display:flex;flex-direction:column;gap:9px}
+.o-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.o-msg{font-size:13.5px;color:#CFCFCF;border-left:3px solid var(--line);padding-left:10px}
+.o-actions{display:flex;gap:10px}
+.n-item{
+  display:flex;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line);cursor:pointer;
+  align-items:flex-start;
+}
+.n-item.unread{background:rgba(248,115,6,.06);border-left:3px solid var(--orange)}
+.n-ic{
+  width:38px;height:38px;flex-shrink:0;border-radius:8px;background:var(--card2);
+  border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.n-item p{font-size:13.5px}
+.n-item time{font-size:11px;color:var(--muted)}
+
+/* ---------- Navigation basse ---------- */
+.bottomnav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;z-index:60;
+  background:var(--black);border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 4px calc(8px + env(safe-area-inset-bottom));
+}
+.nav-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+  font-family:var(--body);
+}
+.nav-btn .ni{font-size:19px}
+.nav-btn.active{color:var(--orange)}
+.nav-btn.create .ni{
+  width:44px;height:44px;margin-top:-22px;background:var(--orange);color:#fff;
+  border-radius:4px;transform:skewX(-10deg) rotate(0deg);
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 4px 14px rgba(248,115,6,.5), 3px 3px 0 rgba(0,158,96,.9);
+}
+
+/* ---------- Menu écrans (prototype) ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.8);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.overlay.open{display:flex}
+.sheet{
+  width:100%;max-width:430px;background:var(--card);border-top:4px solid var(--orange);
+  max-height:80dvh;overflow-y:auto;padding:18px 16px 30px;
+}
+.sheet h3{font-size:22px;margin-bottom:4px}
+.sheet p.hint{color:var(--muted);font-size:12px;margin-bottom:14px}
+.sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sheet-grid button{
+  background:var(--card2);border:1px solid var(--line);color:var(--txt);
+  padding:13px 8px;cursor:pointer;text-align:left;
+  font-family:var(--cond);font-style:italic;font-weight:700;font-size:15px;text-transform:uppercase;
+}
+.sheet-grid button:active{border-color:var(--orange)}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;bottom:100px;left:50%;transform:translateX(-50%) skewX(-10deg);
+  background:var(--green);color:#fff;padding:11px 20px;z-index:200;
+  font-family:var(--cond);font-style:italic;font-weight:700;font-size:16px;
+  text-transform:uppercase;letter-spacing:.5px;box-shadow:0 6px 20px rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap;max-width:92%;
+}
+.toast>span{display:inline-block;transform:skewX(10deg)}
+.toast.show{opacity:1}
+.toast.orange{background:var(--orange)}
+
+/* Divers */
+.muted{color:var(--muted)}
+.center{text-align:center}
+.mt{margin-top:14px}
+.pad{padding:0 16px}
+.empty{padding:40px 16px;text-align:center;color:var(--muted)}
+.empty .big-ic{font-size:44px;display:block;margin-bottom:10px;opacity:.5}
+.legal-item{border-bottom:1px solid var(--line)}
+.legal-item summary{
+  padding:15px 16px;cursor:pointer;font-family:var(--cond);font-style:italic;
+  font-weight:700;font-size:18px;text-transform:uppercase;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.legal-item summary::after{content:'+';color:var(--orange);font-size:22px}
+.legal-item[open] summary::after{content:'–'}
+.legal-item .legal-body{padding:0 16px 16px;color:var(--muted);font-size:13px}
+footer.proto{
+  padding:26px 16px 20px;text-align:center;color:#5A5A5A;font-size:11px;
+  border-top:1px solid var(--line);margin-top:24px;
+}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- ===== Barre supérieure ===== -->
+  <header class="topbar">
+    <div class="brand" onclick="go('home')">
+      <div class="logo-plate"><img src="logo.svg" alt="Logo HoopCI"></div>
+      <b>Hoop<span></span><span class="ci">CI</span></b>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="go('notifs')" aria-label="Notifications">🔔<span class="badge-dot" id="notifBadge">3</span></button>
+      <button class="icon-btn" onclick="toggleMenu(true)" aria-label="Menu">☰</button>
+    </div>
+  </header>
+  <div class="tricolor"></div>
+
+  <main id="view"></main>
+
+  <!-- ===== Navigation basse ===== -->
+  <nav class="bottomnav">
+    <button class="nav-btn" data-nav="home" onclick="go('home')"><span class="ni">🏀</span>Accueil</button>
+    <button class="nav-btn" data-nav="players" onclick="go('players')"><span class="ni">👥</span>Joueurs</button>
+    <button class="nav-btn create" data-nav="create" onclick="go('create')"><span class="ni">＋</span>Créer</button>
+    <button class="nav-btn" data-nav="offers" onclick="go('offers')"><span class="ni">✉️</span>Offres</button>
+    <button class="nav-btn" data-nav="dashboard" onclick="go('dashboard')"><span class="ni">📋</span>Mes tournois</button>
+  </nav>
+
+  <!-- ===== Menu de navigation du prototype ===== -->
+  <div class="overlay" id="menu" onclick="if(event.target===this)toggleMenu(false)">
+    <div class="sheet">
+      <h3>Écrans du prototype</h3>
+      <p class="hint">HoopCI v1.1 — référence visuelle (CDC §11.1). Touchez un écran pour l'ouvrir.</p>
+      <div class="sheet-grid">
+        <button onclick="go('home');toggleMenu(false)">🏀 Accueil / tournois</button>
+        <button onclick="go('detail',1);toggleMenu(false)">📄 Détail tournoi</button>
+        <button onclick="go('detail',5);toggleMenu(false)">🏆 Tournoi terminé + classement</button>
+        <button onclick="go('auth');toggleMenu(false)">🔐 Inscription / connexion</button>
+        <button onclick="go('dashboard');toggleMenu(false)">📋 Tableau de bord orga</button>
+        <button onclick="go('create');toggleMenu(false)">➕ Créer un tournoi</button>
+        <button onclick="go('results',4);toggleMenu(false)">📝 Saisie des résultats</button>
+        <button onclick="go('players');toggleMenu(false)">👥 Annuaire des joueurs</button>
+        <button onclick="go('player',1);toggleMenu(false)">⭐ Profil joueur public</button>
+        <button onclick="go('offers');toggleMenu(false)">✉️ Messagerie / offres</button>
+        <button onclick="go('notifs');toggleMenu(false)">🔔 Notifications</button>
+        <button onclick="go('admin');toggleMenu(false)">🛡️ Back-office admin</button>
+        <button onclick="go('legal');toggleMenu(false)">⚖️ Pages légales</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"><span id="toastMsg"></span></div>
+</div>
+
+<script>
+/* ================================================================
+   HoopCI — Prototype interactif v1.1 (données factices)
+   ================================================================ */
+const COMMUNES = ['Abobo','Adjamé','Attécoubé','Cocody','Koumassi','Marcory','Plateau','Port-Bouët','Treichville','Yopougon'];
+
+const TOURNOIS = [
+  {id:1, titre:'Yop City Summer Jam', commune:'Yopougon', lieu:'Terrain municipal de Niangon', date:'18 – 20 juil. 2026',
+   format:'3x3', niveau:'Quartier', statut:'ouvert', equipes:9, max:16, frais:5000, recompense:'100 000 FCFA + trophée',
+   organisateur:'Konan Kouadio', tel:'+225 07 07 00 00 01', grad:'g1',
+   desc:'Le rendez-vous de l’été à Yopougon. 3 jours de basket, DJ, animations et le titre de rois de Yop City en jeu.'},
+  {id:2, titre:'Agora Night Run', commune:'Koumassi', lieu:'Agora de Koumassi', date:'25 juil. 2026',
+   format:'3x3', niveau:'Open', statut:'complet', equipes:12, max:12, frais:10000, recompense:'250 000 FCFA',
+   organisateur:'FIBB — Agora', tel:'+225 07 07 00 00 02', grad:'g2',
+   desc:'Tournoi nocturne sous les projecteurs de l’Agora. Format éclair, une soirée, un champion.'},
+  {id:3, titre:'Cocody Kings 5x5', commune:'Cocody', lieu:'Plateau sportif du Lycée Technique', date:'1 – 3 août 2026',
+   format:'5x5', niveau:'Licencié', statut:'ouvert', equipes:4, max:8, frais:15000, recompense:'300 000 FCFA + équipements',
+   organisateur:'Marc Aka', tel:'+225 07 07 00 00 03', grad:'g4',
+   desc:'Le 5x5 le plus relevé de la rive nord. Réservé aux joueurs licenciés, arbitrage officiel.'},
+  {id:4, titre:'Abobo Battle', commune:'Abobo', lieu:'Terrain de Sagbé', date:'En cours — finale dim. 12 juil.',
+   format:'3x3', niveau:'Quartier', statut:'en_cours', equipes:8, max:8, frais:2000, recompense:'75 000 FCFA',
+   organisateur:'Moi (démo orga)', tel:'+225 07 07 00 00 04', grad:'g3',
+   desc:'8 équipes, élimination directe. La finale se joue dimanche à 16h.'},
+  {id:5, titre:'Port-Bouët Beach Ball', commune:'Port-Bouët', lieu:'Esplanade de la plage', date:'27 – 28 juin 2026',
+   format:'3x3', niveau:'Open', statut:'termine', equipes:10, max:10, frais:5000, recompense:'150 000 FCFA',
+   organisateur:'Adama Sylla', tel:'+225 07 07 00 00 05', grad:'g5',
+   desc:'Basket les pieds dans le sable. Édition 2026 terminée — bravo aux Sharks !',
+   classement:[{rang:1,equipe:'Sharks de Vridi'},{rang:2,equipe:'Phare Ballers'},{rang:3,equipe:'Aéro Squad'},{rang:4,equipe:'Gonzagville Heat'}],
+   mvp:'Aïcha Traoré'},
+];
+
+const JOUEURS = [
+  {id:1, nom:'Aïcha Traoré', initials:'AT', poste:'Meneuse', commune:'Yopougon', joues:14, gagnes:9, taux:64, mvp:3,
+   dispo:true, verifie:true, boost:true, av:'', pretentions:'Défraiement', zones:'Yopougon · Cocody · Plateau',
+   bio:'Meneuse rapide, grosse vision de jeu. Je cherche une équipe ambitieuse pour la saison des tournois.',
+   palmares:[{t:'Port-Bouët Beach Ball', rang:1, mvp:true},{t:'Yop City Summer Jam 2025', rang:2},{t:'Agora Champions Quest', rang:3},{t:'Treichville Open', rang:1, mvp:true}]},
+  {id:2, nom:'Moussa Diabaté', initials:'MD', poste:'Pivot', commune:'Abobo', joues:11, gagnes:5, taux:45, mvp:1,
+   dispo:true, verifie:false, av:'grn', pretentions:'Prime de match', zones:'Abobo · Adjamé',
+   bio:'2m01, présence dans la raquette, rebond offensif. Disponible les week-ends.',
+   palmares:[{t:'Abobo Battle 2025', rang:1, mvp:true},{t:'Agora Night Run', rang:5}]},
+  {id:3, nom:'Jean-Marc Kouassi', initials:'JK', poste:'Ailier', commune:'Cocody', joues:8, gagnes:6, taux:75, mvp:2,
+   dispo:true, verifie:true, av:'grn', pretentions:'À négocier', zones:'Cocody · Marcory',
+   bio:'Shooteur d’élite à 3 points. Champion universitaire 2025.',
+   palmares:[{t:'Cocody Kings 2025', rang:1, mvp:true},{t:'Campus League', rang:1, mvp:true}]},
+  {id:4, nom:'Joueur U17 — profil restreint', initials:'??', poste:'Arrière', commune:'Koumassi', joues:6, gagnes:3, taux:50, mvp:0,
+   dispo:true, verifie:false, mineur:true, av:'dark', pretentions:'Je joue gratuitement', zones:'Koumassi',
+   bio:'Profil de mineur : photo, nom complet et contact masqués tant que le consentement parental n’est pas validé (CDC §15.3).',
+   palmares:[{t:'Agora Night Run U18', rang:2}]},
+  {id:5, nom:'Yao N’Guessan', initials:'YN', poste:'Meneur', commune:'Treichville', joues:16, gagnes:7, taux:44, mvp:1,
+   dispo:false, verifie:false, av:'', pretentions:'Gratuit', zones:'Treichville',
+   bio:'Handle serré, bon défenseur sur porteur.', palmares:[{t:'Treichville Open', rang:2}]},
+];
+
+let OFFRES = [
+  {id:1, sens:'recue', qui:'Marcory Ballers (coach Marc)', msg:'Salut Aïcha ! On t’a vue au Beach Ball, énorme tournoi. On prépare l’Agora Quest et on cherche une meneuse titulaire. Défraiement + transport assurés.', statut:'envoyee', date:'6 juil.'},
+  {id:2, sens:'recue', qui:'ASC Cocody Élite', msg:'Bonjour, nous montons une équipe 3x3 pour la saison. Ton taux de victoire nous intéresse. Dispo pour un essai samedi ?', statut:'envoyee', date:'4 juil.'},
+  {id:3, sens:'envoyee', qui:'Jean-Marc Kouassi', msg:'Yo Jean-Marc, il nous manque un ailier shooteur pour le Yop City Summer Jam. Prime si on va en finale ?', statut:'acceptee', date:'1 juil.'},
+  {id:4, sens:'envoyee', qui:'Moussa Diabaté', msg:'Besoin d’un pivot pour Cocody Kings. Intéressé ?', statut:'refusee', date:'28 juin'},
+];
+
+let NOTIFS = [
+  {id:1, ic:'🏀', txt:'<b>Nouveau tournoi à Yopougon</b> — Yop City Summer Jam, inscriptions ouvertes.', time:'Il y a 2 h', lu:false, goto:['detail',1]},
+  {id:2, ic:'✉️', txt:'<b>Offre reçue</b> de Marcory Ballers : « On cherche une meneuse titulaire… »', time:'Hier', lu:false, goto:['offers']},
+  {id:3, ic:'🏆', txt:'<b>Résultats publiés</b> — Port-Bouët Beach Ball. Vos statistiques ont été mises à jour.', time:'Il y a 3 j', lu:false, goto:['detail',5]},
+  {id:4, ic:'✅', txt:'Jean-Marc Kouassi a <b>accepté votre offre</b>.', time:'Il y a 6 j', lu:true, goto:['offers']},
+];
+
+const STATUTS = {ouvert:'Ouvert', complet:'Complet', en_cours:'En cours', termine:'Terminé', annule:'Annulé'};
+
+/* ---------- État ---------- */
+let favoris = new Set([2]);
+let filtres = {commune:'', format:'', statut:''};
+let filtresJ = {poste:'', commune:''};
+let authTab = 'register', authRole = 'joueur';
+let currentView = 'home';
+
+/* ---------- Utilitaires ---------- */
+const $ = id => document.getElementById(id);
+const fcfa = n => n === 0 ? 'Gratuit' : n.toLocaleString('fr-FR') + ' FCFA';
+const esc = s => s.replace(/</g,'&lt;');
+
+function toast(msg, orange){
+  const t = $('toast');
+  $('toastMsg').innerHTML = msg;
+  t.classList.toggle('orange', !!orange);
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function toggleMenu(open){ $('menu').classList.toggle('open', open); }
+function statusBadge(s){ return `<span class="status st-${s}"><span>${STATUTS[s]}</span></span>`; }
+function updateNotifBadge(){
+  const n = NOTIFS.filter(x=>!x.lu).length;
+  $('notifBadge').textContent = n;
+  $('notifBadge').style.display = n ? 'flex' : 'none';
+}
+
+/* ---------- Navigation ---------- */
+function go(view, param){
+  currentView = view;
+  const v = VIEWS[view];
+  $('view').innerHTML = typeof v === 'function' ? v(param) : v;
+  window.scrollTo({top:0});
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.nav === view);
+  });
+  updateNotifBadge();
+}
+
+/* ================================================================
+   VUES
+   ================================================================ */
+const VIEWS = {};
+
+/* ---------- Accueil ---------- */
+VIEWS.home = () => {
+  const list = TOURNOIS.filter(t =>
+    (!filtres.commune || t.commune === filtres.commune) &&
+    (!filtres.format || t.format === filtres.format) &&
+    (!filtres.statut || t.statut === filtres.statut)
+  );
+  return `
+  <section class="hero">
+    <span class="kicker">Abidjan · Côte d'Ivoire</span>
+    <h1>Le street basket<br><span class="o">ivoirien</span> a sa maison</h1>
+    <p>Trouve les tournois, prouve ton talent, fais-toi recruter.</p>
+    <div class="cta-row">
+      <button class="btn" onclick="document.getElementById('tlist').scrollIntoView({behavior:'smooth'})"><span>Voir les tournois</span></button>
+      <button class="btn ghost" onclick="go('auth')"><span>Rejoindre</span></button>
+    </div>
+  </section>
+
+  <h2 class="section-title" id="tlist">Tournois à venir</h2>
+  <div class="filters">
+    <select class="chip" onchange="filtres.commune=this.value;go('home')">
+      <option value="">📍 Commune</option>
+      ${COMMUNES.map(c=>`<option ${filtres.commune===c?'selected':''}>${c}</option>`).join('')}
+    </select>
+    <select class="chip" onchange="filtres.format=this.value;go('home')">
+      <option value="">Format</option>
+      <option ${filtres.format==='3x3'?'selected':''}>3x3</option>
+      <option ${filtres.format==='5x5'?'selected':''}>5x5</option>
+    </select>
+    <select class="chip" onchange="filtres.statut=this.value;go('home')">
+      <option value="">Statut</option>
+      ${Object.entries(STATUTS).map(([k,v])=>`<option value="${k}" ${filtres.statut===k?'selected':''}>${v}</option>`).join('')}
+    </select>
+    ${(filtres.commune||filtres.format||filtres.statut)?`<button class="chip active" onclick="filtres={commune:'',format:'',statut:''};go('home')"><span>✕ Effacer</span></button>`:''}
+  </div>
+
+  <div class="cards">
+    ${list.length ? list.map(tournoiCard).join('') : `
+      <div class="empty"><span class="big-ic">🏀</span>Aucun tournoi ne correspond à ces filtres.<br>Essaie une autre commune.</div>`}
+  </div>
+
+  <h2 class="section-title">Ils nous font confiance</h2>
+  <div class="sponsors">
+    <div class="sponsor"><span>Votre marque ici</span></div>
+    <div class="sponsor"><span>Sponsor fintech</span></div>
+    <div class="sponsor"><span>Sponsor télécom</span></div>
+    <div class="sponsor"><span>Équipementier</span></div>
+  </div>
+  ${protoFooter()}`;
+};
+
+function tournoiCard(t){
+  const fav = favoris.has(t.id);
+  return `
+  <article class="t-card" onclick="go('detail',${t.id})">
+    <button class="fav ${fav?'on':''}" onclick="event.stopPropagation();toggleFav(${t.id})" aria-label="Favori">${fav?'★':'☆'}</button>
+    <div class="t-cover ${t.grad}">
+      <span class="big">${t.format}</span>
+      <h3>${t.titre}</h3>
+    </div>
+    <div class="t-body">
+      <div style="display:flex;gap:8px;align-items:center">
+        ${statusBadge(t.statut)}
+        <span class="fmt">${t.format}</span>
+        <span class="muted" style="font-size:12px">${t.niveau}</span>
+      </div>
+      <div class="t-meta">
+        <span>📍 <b>${t.commune}</b></span>
+        <span>📅 <b>${t.date}</b></span>
+        <span>👥 <b>${t.equipes}/${t.max}</b> équipes</span>
+      </div>
+      <div class="t-foot">
+        <span class="price">${fcfa(t.frais)} <small>/ équipe</small></span>
+        <button class="btn sm ${t.statut==='ouvert'?'green':'dark'}" onclick="event.stopPropagation();go('detail',${t.id})"><span>${t.statut==='ouvert'?'S’inscrire':'Voir'}</span></button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function toggleFav(id){
+  if(favoris.has(id)){ favoris.delete(id); toast('Retiré des favoris', true); }
+  else { favoris.add(id); toast('⭐ Tournoi ajouté aux favoris'); }
+  go(currentView === 'detail' ? 'detail' : 'home', id);
+}
+
+/* ---------- Détail tournoi ---------- */
+VIEWS.detail = (id) => {
+  const t = TOURNOIS.find(x=>x.id===id) || TOURNOIS[0];
+  const fav = favoris.has(t.id);
+  const pct = Math.round(t.equipes/t.max*100);
+  return `
+  <div class="detail-cover ${t.grad}">
+    <button class="back" onclick="go('home')">←</button>
+    <button class="fav ${fav?'on':''}" style="top:12px" onclick="toggleFav(${t.id})">${fav?'★':'☆'}</button>
+    <div style="display:flex;gap:8px;margin-bottom:8px">${statusBadge(t.statut)}<span class="fmt" style="background:rgba(0,0,0,.4);color:#fff;border-color:#fff">${t.format}</span></div>
+    <h2>${t.titre}</h2>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-tile"><div class="lbl">📅 Dates</div><div class="val">${t.date}</div></div>
+    <div class="info-tile"><div class="lbl">📍 Commune</div><div class="val">${t.commune}</div></div>
+    <div class="info-tile"><div class="lbl">🏅 Niveau</div><div class="val">${t.niveau}</div></div>
+    <div class="info-tile"><div class="lbl">💰 Frais / équipe</div><div class="val" style="color:var(--orange)">${fcfa(t.frais)}</div></div>
+  </div>
+
+  <div class="panel">
+    <h3>À propos</h3>
+    <p style="font-size:13.5px;color:#CFCFCF">${t.desc}</p>
+    <p class="mt" style="font-size:13px">🏆 <b>Récompense :</b> ${t.recompense}</p>
+    <div class="mt" style="font-size:13px">
+      👥 <b>${t.equipes} / ${t.max} équipes inscrites</b>
+      <div class="progress"><i style="width:${pct}%"></i></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Lieu</h3>
+    <p style="font-size:13.5px">${t.lieu}, ${t.commune}</p>
+  </div>
+  <div class="map-ph"><span class="pin">📍</span>Carte interactive (lat/long) — F2.5</div>
+
+  ${t.statut==='termine' ? classementBlock(t) : ''}
+
+  <div class="panel">
+    <h3>Organisateur</h3>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="avatar grn">${t.organisateur.split(' ').map(w=>w[0]).join('').slice(0,2)}</div>
+      <div style="flex:1">
+        <b>${t.organisateur}</b>
+        <div class="muted" style="font-size:12px">${t.tel}</div>
+      </div>
+      <button class="btn sm green" onclick="toast('📞 Contact : ${t.tel}')"><span>Contacter</span></button>
+    </div>
+  </div>
+
+  <div style="padding:14px 16px 6px;display:flex;flex-direction:column;gap:10px">
+    ${t.statut==='ouvert'
+      ? `<button class="btn block" onclick="inscrireEquipe(${t.id})"><span>🏀 Inscrire mon équipe</span></button>`
+      : t.statut==='complet'
+      ? `<button class="btn block dark" disabled><span>Tournoi complet</span></button>`
+      : ''}
+    <button class="btn block ${fav?'dark':'green'}" onclick="toggleFav(${t.id})"><span>${fav?'★ Retirer des favoris':'☆ Ajouter aux favoris'}</span></button>
+  </div>
+  ${protoFooter()}`;
+};
+
+function classementBlock(t){
+  return `
+  <div class="panel">
+    <h3>🏆 Classement final</h3>
+    ${t.classement.map(c=>`
+      <div class="rank-row rank-${c.rang}">
+        <div class="rank-num"><span>${c.rang}</span></div>
+        <b style="font-family:var(--cond);font-style:italic;font-size:17px;text-transform:uppercase">${c.equipe}</b>
+        ${c.rang===1?'<span style="margin-left:auto">🥇</span>':c.rang===2?'<span style="margin-left:auto">🥈</span>':c.rang===3?'<span style="margin-left:auto">🥉</span>':''}
+      </div>`).join('')}
+    <div class="mvp-band">
+      <div class="avatar" style="width:44px;height:44px;font-size:16px">AT</div>
+      <div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--orange);font-weight:700">MVP du tournoi</div>
+        <b style="font-family:var(--cond);font-style:italic;font-size:18px;text-transform:uppercase">${t.mvp}</b>
+      </div>
+      <button class="btn sm dark" style="margin-left:auto" onclick="go('player',1)"><span>Profil</span></button>
+    </div>
+  </div>`;
+}
+
+function inscrireEquipe(id){
+  const t = TOURNOIS.find(x=>x.id===id);
+  t.equipes = Math.min(t.equipes+1, t.max);
+  if(t.equipes===t.max) t.statut='complet';
+  toast('✅ Équipe inscrite au tournoi !');
+  go('detail', id);
+}
+
+/* ---------- Inscription / Connexion ---------- */
+VIEWS.auth = () => `
+  <div class="center" style="padding:28px 16px 8px">
+    <div class="logo-plate" style="display:inline-block"><img src="logo.svg" alt="HoopCI" style="height:74px"></div>
+    <h2 style="font-size:30px;margin-top:14px">Rejoins <span style="color:var(--orange)">Hoop</span><span style="color:var(--green)">CI</span></h2>
+    <p class="muted" style="font-size:13px">Là où l'on trouve les tournois, où l'on prouve son talent.</p>
+  </div>
+  <div class="tabs">
+    <button class="${authTab==='register'?'active':''}" onclick="authTab='register';go('auth')">Inscription</button>
+    <button class="${authTab==='login'?'active':''}" onclick="authTab='login';go('auth')">Connexion</button>
+  </div>
+  ${authTab==='register' ? registerForm() : loginForm()}
+  ${protoFooter()}`;
+
+function loginForm(){
+  return `
+  <form class="form" onsubmit="event.preventDefault();toast('✅ Connecté ! (JWT — F1.2)');go('home')">
+    <div class="field"><label>Téléphone ou e-mail</label><input required placeholder="+225 07 …"></div>
+    <div class="field"><label>Mot de passe</label><input required type="password" placeholder="••••••••"></div>
+    <button class="btn block" type="submit"><span>Se connecter</span></button>
+    <p class="center muted" style="font-size:13px"><a href="#" style="color:var(--orange)" onclick="event.preventDefault();toast('Lien de réinitialisation envoyé (F1.3)')">Mot de passe oublié ?</a></p>
+  </form>`;
+}
+
+function registerForm(){
+  return `
+  <form class="form" onsubmit="event.preventDefault();registerSubmit()">
+    <div class="field">
+      <label>Je suis… (F1.1)</label>
+      <div class="role-cards">
+        <div class="role-card ${authRole==='organisateur'?'active':''}" onclick="authRole='organisateur';go('auth')">
+          <span class="ic">📋</span><b>Organisateur</b><p>Je publie des tournois</p>
+        </div>
+        <div class="role-card ${authRole==='joueur'?'active':''}" onclick="authRole='joueur';go('auth')">
+          <span class="ic">🏀</span><b>Joueur</b><p>Je joue et me montre</p>
+        </div>
+        <div class="role-card ${authRole==='client'?'active':''}" onclick="authRole='client';go('auth')">
+          <span class="ic">👀</span><b>Client</b><p>Fan ou recruteur</p>
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Prénom</label><input required placeholder="Aïcha"></div>
+      <div class="field"><label>Nom</label><input required placeholder="Traoré"></div>
+    </div>
+    <div class="field"><label>Téléphone</label><input required placeholder="+225 07 …"></div>
+    <div class="field"><label>Commune</label>
+      <select><option value="">— Choisir —</option>${COMMUNES.map(c=>`<option>${c}</option>`).join('')}</select>
+    </div>
+    ${authRole==='joueur' ? `
+    <div class="row2">
+      <div class="field"><label>Poste</label>
+        <select><option>Meneur·se</option><option>Arrière</option><option>Ailier·ère</option><option>Ailier·ère fort·e</option><option>Pivot</option></select>
+      </div>
+      <div class="field"><label>Date de naissance (F1.6)</label>
+        <input type="date" id="ddn" required onchange="checkMinor(this.value)">
+      </div>
+    </div>
+    <div id="minorBlock" style="display:none">
+      <div class="alert">
+        🛡️ <b>Tu as moins de 18 ans.</b> Ton profil restera en <b>visibilité restreinte</b> (pas de photo publique, pas de coordonnées) tant qu'un parent ou tuteur n'a pas donné son accord (CDC §15.3).
+      </div>
+      <div class="field mt"><label>Contact du parent / tuteur</label><input id="tuteur" placeholder="+225 05 … (il recevra une demande de confirmation)"></div>
+      <label class="check mt"><input type="checkbox" id="consent"> Mon parent / tuteur est informé de mon inscription et les offres de recrutement lui seront notifiées.</label>
+    </div>` : ''}
+    <div class="field"><label>Mot de passe</label><input required type="password" placeholder="8 caractères minimum"></div>
+    <label class="check"><input type="checkbox" required> J'accepte les <a href="#" style="color:var(--orange)" onclick="event.preventDefault();go('legal')">CGU</a> et la politique de confidentialité, et je consens au traitement de mes données (loi n° 2013-450 / ARTCI).</label>
+    <button class="btn block" type="submit"><span>Créer mon compte</span></button>
+  </form>`;
+}
+
+function checkMinor(val){
+  if(!val) return;
+  const age = (Date.now() - new Date(val).getTime()) / 3.15576e10;
+  $('minorBlock').style.display = age < 18 ? 'block' : 'none';
+}
+function registerSubmit(){
+  const mb = $('minorBlock');
+  if(mb && mb.style.display==='block' && !$('consent').checked){
+    toast('⚠️ Parcours de consentement parental requis', true); return;
+  }
+  toast('✅ Compte créé — bienvenue sur HoopCI !');
+  go(authRole==='organisateur' ? 'dashboard' : 'home');
+}
+
+/* ---------- Tableau de bord organisateur ---------- */
+VIEWS.dashboard = () => {
+  const mine = TOURNOIS.filter(t=>t.organisateur.startsWith('Moi'));
+  const inscrits = mine.reduce((s,t)=>s+t.equipes,0);
+  return `
+  <div style="padding:22px 16px 6px">
+    <span class="kicker" style="display:inline-block;background:var(--orange);color:#fff;font-family:var(--cond);font-style:italic;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;transform:skewX(-10deg)">Espace organisateur</span>
+    <h2 style="font-size:30px;margin-top:10px">Mes tournois</h2>
+  </div>
+  <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat"><b>${mine.length}</b><span>Tournois</span></div>
+    <div class="stat"><b>${inscrits}</b><span>Équipes inscrites</span></div>
+    <div class="stat"><b>412</b><span>Vues ce mois</span></div>
+  </div>
+  <div class="cards">
+    ${mine.length ? mine.map(t=>`
+    <article class="t-card">
+      <div class="t-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <b style="font-family:var(--cond);font-style:italic;font-size:20px;text-transform:uppercase">${t.titre}</b>
+          ${statusBadge(t.statut)}
+        </div>
+        <div class="t-meta">
+          <span>📍 <b>${t.commune}</b></span><span>👥 <b>${t.equipes}/${t.max}</b></span><span>📅 <b>${t.date}</b></span>
+        </div>
+        <div class="field">
+          <label>Changer le statut (F2.4)</label>
+          <select onchange="setStatut(${t.id}, this.value)">
+            ${Object.entries(STATUTS).map(([k,v])=>`<option value="${k}" ${t.statut===k?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+        <div class="o-actions">
+          <button class="btn sm dark" style="flex:1" onclick="go('detail',${t.id})"><span>Voir la fiche</span></button>
+          <button class="btn sm ${t.statut==='termine'?'dark':'green'}" style="flex:1" onclick="go('results',${t.id})"><span>${t.statut==='termine'?'Résultats saisis ✓':'Saisir les résultats'}</span></button>
+        </div>
+      </div>
+    </article>`).join('') : `<div class="empty"><span class="big-ic">📋</span>Aucun tournoi pour l'instant.</div>`}
+    <button class="btn block" onclick="go('create')"><span>＋ Créer un tournoi</span></button>
+  </div>
+  ${protoFooter()}`;
+};
+
+function setStatut(id, s){
+  TOURNOIS.find(t=>t.id===id).statut = s;
+  toast('Statut mis à jour : ' + STATUTS[s]);
+  go('dashboard');
+}
+
+/* ---------- Créer un tournoi ---------- */
+VIEWS.create = () => `
+  <div style="padding:22px 16px 0">
+    <h2 style="font-size:30px">Créer un <span style="color:var(--orange)">tournoi</span></h2>
+    <p class="muted" style="font-size:13px;margin-top:4px">⏱️ Objectif : publié en moins de 5 minutes (CDC §7.4).</p>
+  </div>
+  <form class="form" onsubmit="event.preventDefault();publishTournoi(this)">
+    <div class="field"><label>Titre *</label><input name="titre" required placeholder="Ex. Marcory Street Cup"></div>
+    <div class="field"><label>Description</label><textarea placeholder="Ambiance, règles, programme…"></textarea></div>
+    <div class="row2">
+      <div class="field"><label>Commune *</label>
+        <select name="commune" required>${COMMUNES.map(c=>`<option>${c}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Lieu *</label><input name="lieu" required placeholder="Terrain, quartier"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Date début *</label><input type="date" required></div>
+      <div class="field"><label>Date fin *</label><input type="date" required></div>
+    </div>
+    <div class="field"><label>Format *</label>
+      <div class="seg" id="segFmt">
+        <button type="button" class="active" onclick="segToggle(this)">3x3</button>
+        <button type="button" onclick="segToggle(this)">5x5</button>
+      </div>
+    </div>
+    <div class="field"><label>Niveau *</label>
+      <div class="seg" id="segNiv">
+        <button type="button" class="active" onclick="segToggle(this)">Quartier</button>
+        <button type="button" onclick="segToggle(this)">Licencié</button>
+        <button type="button" onclick="segToggle(this)">Open</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Équipes max</label><input type="number" value="8" min="2"></div>
+      <div class="field"><label>Frais (FCFA)</label><input type="number" value="0" min="0" step="500"></div>
+    </div>
+    <div class="field"><label>Récompense</label><input placeholder="Ex. 100 000 FCFA + trophée"></div>
+    <div class="field"><label>Affiche du tournoi</label>
+      <div class="map-ph" style="margin:0;height:90px;cursor:pointer" onclick="toast('📷 Sélecteur de fichier (type et taille validés — §15.2)', true)">📷 &nbsp;Ajouter une affiche (JPG/PNG, 5 Mo max)</div>
+    </div>
+    <button class="btn block" type="submit"><span>🚀 Publier le tournoi</span></button>
+    <p class="center muted" style="font-size:12px">Le tournoi passe au statut « Ouvert » et apparaît immédiatement dans l'annuaire.</p>
+  </form>
+  ${protoFooter()}`;
+
+function segToggle(btn){
+  [...btn.parentElement.children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function publishTournoi(f){
+  const titre = f.titre.value || 'Nouveau tournoi';
+  TOURNOIS.unshift({
+    id:Date.now(), titre, commune:f.commune.value, lieu:f.lieu.value||'—',
+    date:'À venir', format:document.querySelector('#segFmt .active').textContent,
+    niveau:document.querySelector('#segNiv .active').textContent,
+    statut:'ouvert', equipes:0, max:8, frais:0, recompense:'—',
+    organisateur:'Moi (démo orga)', tel:'+225 07 07 00 00 04', grad:'g1',
+    desc:'Tournoi créé depuis le prototype.'
+  });
+  toast('🚀 Tournoi publié — visible dans l’annuaire !');
+  go('dashboard');
+}
+
+/* ---------- Saisie des résultats ---------- */
+VIEWS.results = (id) => {
+  const t = TOURNOIS.find(x=>x.id===id) || TOURNOIS[3];
+  const equipes = ['Sagbé Warriors','Abobo Gare Squad','PK18 Ballers','Banco Heat'];
+  return `
+  <div style="padding:22px 16px 0">
+    <button class="back" style="position:static;margin-bottom:12px" onclick="go('dashboard')">←</button>
+    <h2 style="font-size:28px">Résultats — <span style="color:var(--orange)">${t.titre}</span></h2>
+    <p class="muted" style="font-size:13px;margin-top:4px">Classement complet des équipes (F3.3) + MVP (F3.4). Les statistiques des joueurs seront recalculées automatiquement.</p>
+  </div>
+  <form class="form" onsubmit="event.preventDefault();saveResults(${t.id})">
+    <div class="panel" style="margin:0">
+      <h3>Classement des équipes</h3>
+      ${equipes.map((e,i)=>`
+      <div class="rank-row">
+        <select class="chip" style="transform:none;width:74px" id="rk${i}">
+          ${equipes.map((_,r)=>`<option ${r===i?'selected':''}>${r+1}</option>`).join('')}
+        </select>
+        <b style="font-family:var(--cond);font-style:italic;font-size:17px;text-transform:uppercase">${e}</b>
+      </div>`).join('')}
+    </div>
+    <div class="field"><label>🏅 MVP du tournoi (F3.4)</label>
+      <select><option>— Choisir un joueur —</option>${JOUEURS.filter(j=>!j.mineur).map(j=>`<option>${j.nom}</option>`).join('')}</select>
+    </div>
+    <div class="alert green">⚙️ À la validation, une tâche <b>Celery</b> met à jour tournois joués, victoires, taux de victoire et MVP de chaque joueur, puis envoie les notifications (CDC §8.2) — en ≤ 1 min.</div>
+    <button class="btn block green" type="submit"><span>✅ Valider le classement</span></button>
+  </form>
+  ${protoFooter()}`;
+};
+
+function saveResults(id){
+  const ranks = [0,1,2,3].map(i=>$('rk'+i).value);
+  if(new Set(ranks).size !== ranks.length){ toast('⚠️ Deux équipes ont le même rang', true); return; }
+  const t = TOURNOIS.find(x=>x.id===id);
+  t.statut = 'termine';
+  NOTIFS.unshift({id:Date.now(), ic:'🏆', txt:`<b>Résultats publiés</b> — ${t.titre}. Statistiques recalculées.`, time:'À l’instant', lu:false, goto:['detail',id]});
+  toast('🏆 Résultats enregistrés — stats en cours de recalcul');
+  go('dashboard');
+}
+
+/* ---------- Annuaire des joueurs ---------- */
+VIEWS.players = () => {
+  const list = JOUEURS.filter(j =>
+    j.dispo &&
+    (!filtresJ.poste || j.poste.toLowerCase().includes(filtresJ.poste)) &&
+    (!filtresJ.commune || j.commune === filtresJ.commune)
+  ).sort((a,b)=>(b.boost?1:0)-(a.boost?1:0) || b.taux-a.taux);
+  return `
+  <div style="padding:22px 16px 0">
+    <span style="display:inline-block;background:var(--green);color:#fff;font-family:var(--cond);font-style:italic;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;transform:skewX(-10deg)">Marché de talents</span>
+    <h2 style="font-size:30px;margin-top:10px">Joueurs <span style="color:var(--green)">disponibles</span></h2>
+    <p class="muted" style="font-size:13px;margin-top:4px">Des statistiques vérifiées, issues des résultats réels des tournois.</p>
+  </div>
+  <div class="filters">
+    <select class="chip" onchange="filtresJ.poste=this.value;go('players')">
+      <option value="">🏀 Poste</option>
+      <option value="meneu" ${filtresJ.poste==='meneu'?'selected':''}>Meneur·se</option>
+      <option value="arrière" ${filtresJ.poste==='arrière'?'selected':''}>Arrière</option>
+      <option value="ailier" ${filtresJ.poste==='ailier'?'selected':''}>Ailier·ère</option>
+      <option value="pivot" ${filtresJ.poste==='pivot'?'selected':''}>Pivot</option>
+    </select>
+    <select class="chip" onchange="filtresJ.commune=this.value;go('players')">
+      <option value="">📍 Commune</option>
+      ${COMMUNES.map(c=>`<option ${filtresJ.commune===c?'selected':''}>${c}</option>`).join('')}
+    </select>
+    ${(filtresJ.poste||filtresJ.commune)?`<button class="chip active" onclick="filtresJ={poste:'',commune:''};go('players')"><span>✕ Effacer</span></button>`:''}
+  </div>
+  <div class="cards">
+    ${list.length ? list.map(playerCard).join('') : `<div class="empty"><span class="big-ic">👥</span>Aucun joueur disponible avec ces filtres.</div>`}
+  </div>
+  ${protoFooter()}`;
+};
+
+function playerCard(j){
+  return `
+  <article class="p-card ${j.boost?'boost':''}" onclick="go('player',${j.id})">
+    ${j.boost?'<span class="boost-tag">★ En avant</span>':''}
+    <div class="avatar ${j.av}">${j.mineur?'🔒':j.initials}</div>
+    <div class="p-main">
+      <div class="p-name">${j.mineur?'Joueur U17':j.nom} ${j.verifie?'<span class="vbadge" title="Profil vérifié">✔</span>':''}</div>
+      <div class="p-sub">${j.poste} · ${j.commune} ${j.mineur?'· <span class="restreint">Profil restreint (mineur)</span>':''}</div>
+      <div class="winbar">
+        <span>${j.joues} tournois</span>
+        <div class="bar"><i style="width:${j.taux}%"></i></div>
+        <b>${j.taux}%</b>
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ---------- Profil joueur public ---------- */
+VIEWS.player = (id) => {
+  const j = JOUEURS.find(x=>x.id===id) || JOUEURS[0];
+  return `
+  <div class="profile-head">
+    <button class="back" onclick="go('players')">←</button>
+    <div class="avatar lg ${j.av}" style="margin-left:40px">${j.mineur?'🔒':j.initials}</div>
+    <div>
+      <div class="p-name" style="font-size:24px">${j.mineur?'Joueur U17':j.nom} ${j.verifie?'<span class="vbadge">✔</span>':''}</div>
+      <div class="muted" style="font-size:13px">${j.poste} · ${j.commune}</div>
+      <div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">
+        ${j.dispo?'<span class="dispo-pill">● Disponible</span>':'<span class="restreint">Indisponible</span>'}
+        ${j.mvp?`<span class="dispo-pill" style="background:rgba(248,115,6,.15);color:var(--orange);border-color:var(--orange)">🏅 ${j.mvp}× MVP</span>`:''}
+      </div>
+    </div>
+  </div>
+
+  ${j.mineur?`<div class="alert" style="margin:12px 16px">🛡️ Profil de mineur en <b>visibilité restreinte</b> : photo, identité complète et contact masqués. Toute offre est notifiée au tuteur (CDC §15.3).</div>`:''}
+
+  <div class="stats-row">
+    <div class="stat"><b>${j.joues}</b><span>Joués</span></div>
+    <div class="stat"><b>${j.gagnes}</b><span>Gagnés</span></div>
+    <div class="stat"><b>${j.taux}%</b><span>Victoires</span></div>
+    <div class="stat"><b>${j.mvp}</b><span>MVP</span></div>
+  </div>
+  <p class="muted center" style="font-size:11px;padding:6px 16px 0">Statistiques calculées automatiquement à partir des résultats saisis par les organisateurs — infalsifiables.</p>
+
+  <div class="panel mt">
+    <h3>Carte de transfert</h3>
+    <p style="font-size:13.5px;color:#CFCFCF">${j.bio}</p>
+    <div class="t-meta mt">
+      <span>💰 <b>${j.pretentions}</b></span>
+      <span>📍 <b>${j.zones}</b></span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Palmarès</h3>
+    ${j.palmares.map(p=>`
+    <div class="rank-row ${p.rang<=3?'rank-'+p.rang:''}">
+      <div class="rank-num"><span>${p.rang}</span></div>
+      <div style="flex:1">
+        <b style="font-family:var(--cond);font-style:italic;font-size:16px;text-transform:uppercase">${p.t}</b>
+        <div class="muted" style="font-size:11.5px">${p.rang===1?'Vainqueur':p.rang+'ᵉ place'}${p.mvp?' · 🏅 MVP':''}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <div style="padding:8px 16px">
+    <button class="btn block green" onclick="sendOffer('${j.mineur?'Joueur U17':j.nom}', ${!!j.mineur})"><span>✉️ Envoyer une offre</span></button>
+    <p class="center muted" style="font-size:11.5px;margin-top:8px">Offre privée (F4.3). HoopCI met en relation mais n'est pas partie à l'accord conclu.</p>
+  </div>
+  ${protoFooter()}`;
+};
+
+function sendOffer(nom, mineur){
+  if(mineur){ toast('🛡️ Offre transmise au tuteur pour validation', true); return; }
+  OFFRES.unshift({id:Date.now(), sens:'envoyee', qui:nom, msg:'(Votre message d’offre rédigé ici…)', statut:'envoyee', date:'À l’instant'});
+  toast('✉️ Offre envoyée à ' + nom);
+  go('offers');
+}
+
+/* ---------- Offres ---------- */
+let offerTab = 'recue';
+VIEWS.offers = () => {
+  const list = OFFRES.filter(o=>o.sens===offerTab);
+  const stChip = s => s==='acceptee' ? '<span class="status st-ouvert"><span>Acceptée</span></span>'
+                : s==='refusee' ? '<span class="status st-annule"><span>Refusée</span></span>'
+                : '<span class="status st-en_cours"><span>En attente</span></span>';
+  return `
+  <div style="padding:22px 16px 0"><h2 style="font-size:30px">Mes <span style="color:var(--orange)">offres</span></h2></div>
+  <div class="tabs" style="margin-top:8px">
+    <button class="${offerTab==='recue'?'active':''}" onclick="offerTab='recue';go('offers')">Reçues (${OFFRES.filter(o=>o.sens==='recue').length})</button>
+    <button class="${offerTab==='envoyee'?'active':''}" onclick="offerTab='envoyee';go('offers')">Envoyées (${OFFRES.filter(o=>o.sens==='envoyee').length})</button>
+  </div>
+  <div class="cards">
+    ${list.length ? list.map(o=>`
+    <div class="o-card">
+      <div class="o-head">
+        <b style="font-family:var(--cond);font-style:italic;font-size:17px;text-transform:uppercase">${o.sens==='recue'?'De : ':'À : '}${o.qui}</b>
+        ${stChip(o.statut)}
+      </div>
+      <p class="o-msg">${o.msg}</p>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <time class="muted" style="font-size:11.5px">${o.date}</time>
+        ${o.sens==='recue' && o.statut==='envoyee' ? `
+        <div class="o-actions">
+          <button class="btn sm red" onclick="answerOffer(${o.id},'refusee')"><span>Refuser</span></button>
+          <button class="btn sm green" onclick="answerOffer(${o.id},'acceptee')"><span>Accepter</span></button>
+        </div>` : o.statut==='acceptee' ? '<span class="muted" style="font-size:11.5px">📞 Coordonnées échangées</span>' : ''}
+      </div>
+    </div>`).join('') : `<div class="empty"><span class="big-ic">✉️</span>Aucune offre ${offerTab==='recue'?'reçue':'envoyée'} pour l'instant.</div>`}
+  </div>
+  ${protoFooter()}`;
+};
+
+function answerOffer(id, st){
+  const o = OFFRES.find(x=>x.id===id);
+  o.statut = st;
+  if(st==='acceptee') toast('🤝 Offre acceptée — coordonnées échangées !');
+  else toast('Offre refusée', true);
+  go('offers');
+}
+
+/* ---------- Notifications ---------- */
+VIEWS.notifs = () => `
+  <div style="padding:22px 16px 10px;display:flex;justify-content:space-between;align-items:center">
+    <h2 style="font-size:30px">Notifications</h2>
+    <button class="btn sm dark" onclick="NOTIFS.forEach(n=>n.lu=true);go('notifs')"><span>Tout lire</span></button>
+  </div>
+  ${NOTIFS.map(n=>`
+  <div class="n-item ${n.lu?'':'unread'}" onclick="readNotif(${n.id})">
+    <div class="n-ic">${n.ic}</div>
+    <div style="flex:1">
+      <p>${n.txt}</p>
+      <time>${n.time}</time>
+    </div>
+  </div>`).join('')}
+  <p class="center muted" style="font-size:11.5px;padding:16px">Centre de notifications interne (F5.2 / F5.5). Push web PWA et e-mail : phase 5.</p>
+  ${protoFooter()}`;
+
+function readNotif(id){
+  const n = NOTIFS.find(x=>x.id===id);
+  n.lu = true;
+  go(n.goto[0], n.goto[1]);
+}
+
+/* ---------- Back-office admin ---------- */
+VIEWS.admin = () => `
+  <div style="padding:22px 16px 6px">
+    <span style="display:inline-block;background:var(--red);color:#fff;font-family:var(--cond);font-style:italic;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;transform:skewX(-10deg)">Back-office</span>
+    <h2 style="font-size:30px;margin-top:10px">Modération</h2>
+    <p class="muted" style="font-size:13px">F5.3 / F5.4 — signalements et gestion des contenus.</p>
+  </div>
+  <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat"><b>2</b><span>Signalements</span></div>
+    <div class="stat"><b>1</b><span>Consentements en attente</span></div>
+    <div class="stat"><b>27</b><span>Tournois actifs</span></div>
+  </div>
+  <div class="cards">
+    <div class="o-card">
+      <div class="o-head"><b style="font-family:var(--cond);font-style:italic;font-size:16px;text-transform:uppercase">🚩 Tournoi suspect signalé</b><span class="status st-en_cours"><span>À traiter</span></span></div>
+      <p class="o-msg">« Grand tournoi 500 000 FCFA » — signalé 3 fois : organisateur injoignable, adresse inexistante.</p>
+      <div class="o-actions">
+        <button class="btn sm dark" style="flex:1" onclick="toast('Fiche ouverte en lecture admin', true)"><span>Examiner</span></button>
+        <button class="btn sm red" style="flex:1" onclick="toast('Contenu retiré et organisateur suspendu')"><span>Retirer</span></button>
+      </div>
+    </div>
+    <div class="o-card">
+      <div class="o-head"><b style="font-family:var(--cond);font-style:italic;font-size:16px;text-transform:uppercase">🛡️ Consentement parental</b><span class="status st-complet"><span>En attente</span></span></div>
+      <p class="o-msg">Joueur U17 (Koumassi) — tuteur contacté le 5 juil., relance automatique dans 48 h. Profil maintenu en visibilité restreinte.</p>
+      <div class="o-actions">
+        <button class="btn sm green" style="flex:1" onclick="toast('✅ Consentement validé — profil passé en visibilité publique')"><span>Valider le consentement</span></button>
+      </div>
+    </div>
+    <div class="o-card">
+      <div class="o-head"><b style="font-family:var(--cond);font-style:italic;font-size:16px;text-transform:uppercase">📊 Demande RGPD/ARTCI</b><span class="status st-en_cours"><span>72 h max</span></span></div>
+      <p class="o-msg">Demande de suppression des données d'un mineur par son tuteur (reçue il y a 6 h). Délai : 72 h (CDC §15.3).</p>
+      <div class="o-actions">
+        <button class="btn sm red" style="flex:1" onclick="toast('Données supprimées et confirmation envoyée au tuteur')"><span>Supprimer les données</span></button>
+      </div>
+    </div>
+  </div>
+  ${protoFooter()}`;
+
+/* ---------- Pages légales ---------- */
+VIEWS.legal = () => `
+  <div style="padding:22px 16px 10px"><h2 style="font-size:30px">Pages <span style="color:var(--green)">légales</span></h2></div>
+  <details class="legal-item">
+    <summary>Conditions générales d'utilisation</summary>
+    <div class="legal-body">Rôles et responsabilités des organisateurs, joueurs et clients · règles de contenu · sanctions (suspension) · acceptation obligatoire à l'inscription. HoopCI met en relation mais n'est pas partie aux accords conclus entre joueurs et équipes ; aucune commission n'est perçue en V1.</div>
+  </details>
+  <details class="legal-item">
+    <summary>Politique de confidentialité</summary>
+    <div class="legal-body">Données collectées (identité, téléphone, photo, performances), finalités, durée de conservation, droits d'accès, de rectification et de suppression. Conformité à la loi ivoirienne n° 2013-450, sous le contrôle de l'ARTCI. Registre des traitements tenu à jour. Suppression prioritaire (72 h) des données d'un mineur sur demande d'un tuteur.</div>
+  </details>
+  <details class="legal-item">
+    <summary>Mentions légales</summary>
+    <div class="legal-body">Éditeur : HoopCI — Israël Coulibaly (kingBen-j) · Abidjan, Côte d'Ivoire. Hébergement : VPS Ubuntu 24.04. Contact : support (e-mail dédié + WhatsApp, réponse sous 48 h).</div>
+  </details>
+  <details class="legal-item">
+    <summary>Protection des mineurs</summary>
+    <div class="legal-body">Date de naissance demandée à l'inscription joueur. Tout profil de moins de 18 ans reste en visibilité restreinte (pas de photo publique, pas de coordonnées, pseudonyme possible) tant que le consentement parental n'est pas recueilli. Les offres adressées à un mineur sont notifiées au tuteur.</div>
+  </details>
+  ${protoFooter()}`;
+
+/* ---------- Pied de page prototype ---------- */
+function protoFooter(){
+  return `<footer class="proto">
+    <div class="tricolor" style="max-width:120px;margin:0 auto 12px"></div>
+    HoopCI — Prototype interactif v1.1 · Référence visuelle (CDC §11)<br>
+    Design inspiré FIBA 3x3 · Couleurs de la Côte d'Ivoire 🇨🇮<br>
+    Données factices — aucune API connectée
+  </footer>`;
+}
+
+/* ---------- Démarrage ---------- */
+go('home');
+</script>
+</body>
+</html>

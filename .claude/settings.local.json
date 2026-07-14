@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($f = \"C:\\\\Users\\\\couli\\\\Downloads\\\\WhatsApp Image 2026-06-26 at 2.55.27 PM.svg\"; $head = \\(Get-Content $f -TotalCount 3 -Encoding UTF8\\) -join \"`n\"; $head.Substring\\(0, [Math]::Min\\(600, $head.Length\\)\\); \"---\"; \\(Get-Item $f\\).Length)",
+      "PowerShell($f = \"C:\\\\Users\\\\couli\\\\Downloads\\\\WhatsApp Image 2026-06-26 at 2.55.27 PM.svg\"; $colors = Select-String -Path $f -Pattern 'fill=\"\\(#[0-9A-Fa-f]{6}\\)\"' -AllMatches | ForEach-Object { $_.Matches } | ForEach-Object { $_.Groups[1].Value }; $colors | Group-Object | Sort-Object Count -Descending | Select-Object -First 15 | Format-Table Name, Count)"
+    ]
+  }
+}

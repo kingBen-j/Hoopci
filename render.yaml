@@ -1,0 +1,71 @@
+# Blueprint Render — https://render.com/docs/blueprint-spec
+# Déploiement : pousser le repo sur GitHub, puis Render → New → Blueprint.
+# Pas-à-pas et variables à renseigner : voir RENDER.md.
+
+databases:
+  - name: hoopci-db
+    plan: free
+
+services:
+  # API Django (gunicorn)
+  - type: web
+    name: hoopci-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: bash build.sh
+    # --bind écrase le gunicorn.conf.py local (qui cible le VPS : 127.0.0.1:8000, 3 workers)
+    startCommand: gunicorn hoopci.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    healthCheckPath: /api/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.4
+      - key: DJANGO_SETTINGS_MODULE
+        value: hoopci.settings.render
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hoopci-db
+          property: connectionString
+      # Redirections du checkout GeniusPay — remplacer par l'URL réelle du frontend
+      # une fois déployé (visible sur le dashboard Render)
+      - key: FRONTEND_URL
+        value: https://hoopci-frontend.onrender.com
+
+  # Site public (React + Vite)
+  - type: web
+    name: hoopci-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    # SPA : toutes les routes retombent sur index.html (React Router prend le relais)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: hoopci-backend
+          envVarKey: RENDER_EXTERNAL_URL
+
+  # Dashboard d'administration
+  - type: web
+    name: hoopci-admin
+    runtime: static
+    rootDir: admin-dashboard
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: hoopci-backend
+          envVarKey: RENDER_EXTERNAL_URL
