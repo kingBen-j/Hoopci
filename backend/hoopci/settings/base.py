@@ -83,12 +83,15 @@ WSGI_APPLICATION = 'hoopci.wsgi.application'
 
 AUTH_USER_MODEL = 'accounts.Utilisateur'
 
+# Base PostgreSQL par variables séparées (VPS / production.py). development.py et
+# render.py REMPLACENT ce bloc (SQLite / DATABASE_URL) : on utilise donc .get() pour
+# ne pas crasher à l'import quand DB_NAME n'est pas défini (ex. déploiement Render).
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASSWORD'],
+        'NAME': os.environ.get('DB_NAME', ''),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
