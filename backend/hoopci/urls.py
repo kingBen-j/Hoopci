@@ -25,3 +25,18 @@ if getattr(settings, 'SERVE_MEDIA', False):
     from django.views.static import serve
 
     urlpatterns += [re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
+
+# Fallback SPA React : toute route hors API/admin/media renvoie index.html du build
+# Vite (le routeur React prend ensuite le relais côté client). WhiteNoise a déjà
+# servi les vrais fichiers (assets, sw.js…) avant d'arriver ici.
+FRONTEND_DIST = getattr(settings, 'FRONTEND_DIST', None)
+if FRONTEND_DIST and FRONTEND_DIST.exists():
+    from django.views.static import serve as _serve
+
+    def _spa_index(request, *args, **kwargs):
+        return _serve(request, 'index.html', document_root=str(FRONTEND_DIST))
+
+    admin_prefix = settings.ADMIN_URL.rstrip('/')
+    urlpatterns += [
+        re_path(rf'^(?!api/|media/|{admin_prefix}).*$', _spa_index),
+    ]

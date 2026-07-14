@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 .env
 *.egg-info/
-dist/
+/dist/
 build/
 .venv/
 venv/
@@ -15,7 +15,7 @@ backend/db.sqlite3
 
 # Node / React
 node_modules/
-frontend/dist/
+# frontend/dist est VERSIONNÉ : c'est le build de la PWA servi par le backend Django
 admin-dashboard/dist/
 frontend/.env.local
 admin-dashboard/.env.local

@@ -67,6 +67,14 @@ STORAGES = {
     'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
 }
 
+# Servir la PWA (build Vite) depuis le même service : un seul domaine sert l'API
+# (/api) ET le site React (tout le reste), sans CORS. WhiteNoise sert les fichiers
+# du build (assets, manifest, sw.js…) ; le fallback SPA est dans hoopci/urls.py.
+FRONTEND_DIST = BASE_DIR.parent / 'frontend' / 'dist'
+if FRONTEND_DIST.exists():
+    WHITENOISE_ROOT = str(FRONTEND_DIST)
+    WHITENOISE_INDEX_FILE = True
+
 # Django sert aussi les médias (voir hoopci/urls.py). Attention : le disque Render
 # est éphémère, les uploads disparaissent à chaque déploiement — prévoir un disque
 # persistant ou un stockage externe pour la production réelle.
