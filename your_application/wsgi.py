@@ -32,18 +32,33 @@ try:
 except Exception as exc:  # pragma: no cover - ne pas empêcher le démarrage
     logging.getLogger("django").warning("Préparation au démarrage impossible : %s", exc)
 
-# Compte admin initial (optionnel) : créé si les variables DJANGO_SUPERUSER_* sont
-# présentes et qu'aucun compte avec cet e-mail n'existe. Nécessite EMAIL, PASSWORD,
-# USERNAME et ROLE (le modèle Utilisateur exige username + role). À retirer après
-# le premier déploiement une fois le compte créé.
-if os.environ.get("DJANGO_SUPERUSER_EMAIL") and os.environ.get("DJANGO_SUPERUSER_PASSWORD"):
+# Compte admin (optionnel) : créé — ou corrigé — au démarrage si DJANGO_SUPERUSER_EMAIL
+# et DJANGO_SUPERUSER_PASSWORD sont présents. USERNAME et ROLE ont des valeurs par
+# défaut (donc seules 2 variables suffisent). Le mot de passe est (re)positionné à
+# chaque démarrage pour garantir la connexion. À retirer une fois le compte en place.
+_su_email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
+_su_password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+if _su_email and _su_password:
     try:
         from django.contrib.auth import get_user_model
 
-        if not get_user_model().objects.filter(email=os.environ["DJANGO_SUPERUSER_EMAIL"]).exists():
-            call_command("createsuperuser", "--noinput")
-            logging.getLogger("django").warning("Compte admin initial créé.")
+        User = get_user_model()
+        user, created = User.objects.get_or_create(
+            email=_su_email,
+            defaults={
+                "username": os.environ.get("DJANGO_SUPERUSER_USERNAME") or _su_email.split("@")[0],
+                "role": os.environ.get("DJANGO_SUPERUSER_ROLE") or "client",
+            },
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.set_password(_su_password)
+        user.save()
+        logging.getLogger("django").warning(
+            "Compte admin %s : %s", "CRÉÉ" if created else "mis à jour", _su_email
+        )
     except Exception as exc:  # pragma: no cover
-        logging.getLogger("django").warning("Création du compte admin impossible : %s", exc)
+        logging.getLogger("django").error("Création du compte admin ÉCHOUÉE : %s", exc)
 
 from hoopci.wsgi import application  # noqa: E402,F401  (chargé par gunicorn)
