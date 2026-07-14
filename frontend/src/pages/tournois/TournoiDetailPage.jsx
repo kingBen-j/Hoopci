@@ -7,7 +7,7 @@ import { StatusBadge, Spinner, Empty, Avatar } from '../../components/ui/bits.js
 import Modal from '../../components/ui/Modal.jsx'
 import { useToast } from '../../components/ui/Toast.jsx'
 import { useAuthStore } from '../../store/authStore.js'
-import { NIVEAUX, FORMAT_LABELS, CATEGORIES_AGE, TARIF_INSCRIPTION_EQUIPE, fcfa, fmtDateRange, gradFor, apiError } from '../../lib/constants.js'
+import { NIVEAUX, FORMAT_LABELS, CATEGORIES_AGE, MEMBRES_MIN_PAR_FORMAT, TARIF_INSCRIPTION_EQUIPE, fcfa, fmtDateRange, gradFor, apiError } from '../../lib/constants.js'
 
 /**
  * Fiche publique d'un tournoi : infos, équipes, résultat, favori,
@@ -21,6 +21,7 @@ export default function TournoiDetailPage() {
   const { user } = useAuthStore()
   const [showInscription, setShowInscription] = useState(false)
   const [nomEquipe, setNomEquipe] = useState('')
+  const [coequipiers, setCoequipiers] = useState([''])
 
   const { data: t, isLoading, isError } = useQuery({
     queryKey: ['tournoi', id],
@@ -43,11 +44,12 @@ export default function TournoiDetailPage() {
   })
 
   const inscriptionMutation = useMutation({
-    mutationFn: () => inscrireEquipe(id, nomEquipe.trim()),
+    mutationFn: () => inscrireEquipe(id, nomEquipe.trim(), coequipiers.map((e) => e.trim()).filter(Boolean)),
     onSuccess: ({ data: eq }) => {
       invalidate()
       setShowInscription(false)
       setNomEquipe('')
+      setCoequipiers([''])
       if (eq.payee) {
         // Équipe ajoutée par le promoteur du tournoi : exemptée de frais
         toast('Équipe inscrite au tournoi !')
@@ -79,6 +81,9 @@ export default function TournoiDetailPage() {
     : `https://www.google.com/maps/search/${encodeURIComponent(`${t.lieu} ${t.commune} Abidjan`)}`
   const telephone = t.contact || t.organisateur?.telephone
   const estJoueur = user?.role === 'joueur'
+  // Effectif exigé par le format (le capitaine joueur compte pour un)
+  const minRequis = MEMBRES_MIN_PAR_FORMAT[t.format] || 0
+  const slotsCoequipiers = Math.max(0, minRequis - (estJoueur ? 1 : 0))
 
   return (
     <>
@@ -236,7 +241,13 @@ export default function TournoiDetailPage() {
               {t.statut === 'ouvert' && (
                 <button
                   className="btn block"
-                  onClick={() => (user ? setShowInscription(true) : navigate('/login'))}
+                  onClick={() => {
+                    if (!user) { navigate('/login'); return }
+                    // Prépare autant de champs coéquipiers que le format l'exige
+                    // (le capitaine joueur compte pour un)
+                    setCoequipiers(Array(Math.max(1, slotsCoequipiers)).fill(''))
+                    setShowInscription(true)
+                  }}
                 >
                   <span><UserPlus size={16} /> Inscrire mon équipe</span>
                 </button>
@@ -275,15 +286,53 @@ export default function TournoiDetailPage() {
                 required
               />
             </div>
+
+            <p className="alert" style={{ fontSize: 12.5 }}>
+              <Users size={13} style={{ verticalAlign: '-2px' }} /> Ce tournoi se joue en{' '}
+              <b>{FORMAT_LABELS[t.format] || t.format}</b> — <b>{minRequis} joueurs</b> minimum,
+              tous inscrits sur HoopCI.
+            </p>
+
             {estJoueur && (
               <p className="alert green" style={{ fontSize: 12.5 }}>
-                Tu seras automatiquement ajouté comme premier joueur de l'équipe.
+                Tu es le capitaine — déjà compté comme premier joueur. Renseigne l'e-mail de tes coéquipiers.
               </p>
             )}
+
+            {/* Effectif : un e-mail de compte HoopCI par coéquipier */}
+            <div className="field">
+              <label>Coéquipiers (e-mail de leur compte HoopCI)</label>
+              {coequipiers.map((email, idx) => (
+                <input
+                  key={idx}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setCoequipiers((arr) => arr.map((v, i) => (i === idx ? e.target.value : v)))}
+                  placeholder={`Coéquipier ${idx + 1} — email@exemple.ci`}
+                  required={idx < slotsCoequipiers}
+                  style={{ marginBottom: 6 }}
+                />
+              ))}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button type="button" className="btn sm dark" onClick={() => setCoequipiers((a) => [...a, ''])}>
+                  <span>+ Ajouter un remplaçant</span>
+                </button>
+                {coequipiers.length > slotsCoequipiers && (
+                  <button type="button" className="btn sm dark" onClick={() => setCoequipiers((a) => a.slice(0, -1))}>
+                    <span>− Retirer</span>
+                  </button>
+                )}
+              </div>
+              <p className="muted" style={{ fontSize: 11.5, marginTop: 6 }}>
+                Chaque coéquipier doit déjà avoir créé son compte sur HoopCI. Un joueur non inscrit bloque la validation.
+              </p>
+            </div>
+
             {user?.id !== t.organisateur?.id && (
               <p className="muted" style={{ fontSize: 12 }}>
                 Inscription : {fcfa(TARIF_INSCRIPTION_EQUIPE)} (frais de plateforme)
-                {Number(t.frais_inscription) > 0 && <> + {fcfa(t.frais_inscription)} (frais du tournoi)</>},
+                {Number(t.frais_inscription) > 0 && <> + {fcfa(t.frais_inscription)} (frais du tournoi)</>}
+                {' '}= <b>{fcfa(TARIF_INSCRIPTION_EQUIPE + Number(t.frais_inscription || 0))}</b>,
                 payable à l'étape suivante. L'équipe apparaît après confirmation du paiement.
               </p>
             )}

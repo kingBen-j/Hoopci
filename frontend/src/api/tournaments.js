@@ -35,8 +35,8 @@ export const getPalmares = (params) =>
 export const getClassementEquipes = () =>
   client.get('/tournaments/classement-equipes/')
 
-export const inscrireEquipe = (tournoiId, nom) =>
-  client.post(`/tournaments/${tournoiId}/equipes/`, { nom })
+export const inscrireEquipe = (tournoiId, nom, membres = []) =>
+  client.post(`/tournaments/${tournoiId}/equipes/`, { nom, membres })
 
 export const rejoindreEquipe = (tournoiId, equipeId) =>
   client.post(`/tournaments/${tournoiId}/rejoindre/`, { equipe: equipeId })

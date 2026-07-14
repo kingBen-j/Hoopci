@@ -4,6 +4,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Count, Q
 
@@ -94,24 +95,75 @@ class TournoiViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='equipes')
     def ajouter_equipe(self, request, pk=None):
+        """
+        Inscrit une équipe avec son effectif complet. Tous les joueurs doivent
+        avoir un compte HoopCI (fournis par e-mail) et leur nombre doit atteindre
+        le minimum du format (3x3 → 3, 5x5 → 5, maracana → 6, 7x7 → 7, 11x11 → 11).
+        Le capitaine joueur est ajouté d'office.
+        """
         tournoi = self.get_object()
         if tournoi.statut != Tournoi.STATUT_OUVERT:
             return Response({'detail': "Les inscriptions sont fermées."}, status=status.HTTP_400_BAD_REQUEST)
         if tournoi.nombre_equipes_max and tournoi.equipes.filter(payee=True).count() >= tournoi.nombre_equipes_max:
             return Response({'detail': "Le tournoi est complet."}, status=status.HTTP_400_BAD_REQUEST)
-        # Classe d'âge : contrôlée pour le joueur qui inscrit (il rejoint l'équipe)
+
+        nom = (request.data.get('nom') or '').strip()
+        if not nom:
+            return Response({'nom': "Le nom de l'équipe est requis."}, status=status.HTTP_400_BAD_REQUEST)
+        if tournoi.equipes.filter(nom__iexact=nom).exists():
+            return Response({'nom': "Une équipe porte déjà ce nom dans ce tournoi."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Effectif : liste d'e-mails ; le capitaine joueur s'ajoute lui-même
+        emails = request.data.get('membres') or []
+        if isinstance(emails, str):
+            emails = [emails]
+        emails = [e.strip().lower() for e in emails if isinstance(e, str) and e.strip()]
         if request.user.role == 'joueur':
-            ok, message = tournoi.accepte_joueur(request.user)
+            emails.append(request.user.email.lower())
+        emails = list(dict.fromkeys(emails))  # dédoublonne en gardant l'ordre
+
+        minimum = Tournoi.MEMBRES_MIN_PAR_FORMAT.get(tournoi.format, 0)
+        if len(emails) < minimum:
+            return Response(
+                {'membres': f"Ce format ({tournoi.get_format_display()}) exige au moins {minimum} "
+                            f"joueurs inscrits sur HoopCI (tu en as fourni {len(emails)})."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Tous les e-mails doivent correspondre à des joueurs HoopCI actifs
+        User = get_user_model()
+        trouves = {u.email.lower(): u for u in User.objects.filter(
+            email__in=emails, role=User.ROLE_JOUEUR, is_active=True,
+        )}
+        inconnus = [e for e in emails if e not in trouves]
+        if inconnus:
+            return Response(
+                {'membres': "Ces adresses ne correspondent à aucun joueur inscrit sur HoopCI : "
+                            + ', '.join(inconnus)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        membres = [trouves[e] for e in emails]
+
+        # Classe d'âge : chaque joueur doit correspondre à la catégorie du tournoi
+        for u in membres:
+            ok, message = tournoi.accepte_joueur(u)
             if not ok:
-                return Response({'detail': message}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = EquipeSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        # L'inscription se paie (500 FCFA plateforme + frais du tournoi, apps.payments) ;
-        # les équipes ajoutées par le promoteur du tournoi sont exemptées
-        equipe = serializer.save(tournoi=tournoi, payee=(request.user == tournoi.organisateur))
-        # Le joueur qui inscrit son équipe en devient automatiquement membre
-        if request.user.role == 'joueur':
-            Participation.objects.get_or_create(joueur=request.user, equipe=equipe)
+                return Response({'membres': f"{u.get_full_name() or u.email} : {message}"},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # Aucun de ces joueurs ne peut déjà participer à ce tournoi (autre équipe)
+        deja = Participation.objects.filter(equipe__tournoi=tournoi, joueur__in=membres).select_related('joueur')
+        if deja.exists():
+            noms = ', '.join(p.joueur.get_full_name() or p.joueur.email for p in deja)
+            return Response({'membres': f"Déjà engagés dans ce tournoi : {noms}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        with transaction.atomic():
+            # L'inscription se paie (500 FCFA plateforme + frais du tournoi, apps.payments) ;
+            # les équipes ajoutées par le promoteur du tournoi sont exemptées
+            equipe = Equipe.objects.create(
+                tournoi=tournoi, nom=nom, payee=(request.user == tournoi.organisateur),
+            )
+            Participation.objects.bulk_create([Participation(joueur=u, equipe=equipe) for u in membres])
         return Response(EquipeSerializer(equipe).data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])

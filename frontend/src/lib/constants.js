@@ -20,6 +20,15 @@ export const FORMATS_PAR_SPORT = {
   football: ['maracana', '7x7', '11x11'],
 }
 
+/** Nombre minimum de joueurs (tous inscrits sur HoopCI) selon le format — mêmes valeurs que le backend */
+export const MEMBRES_MIN_PAR_FORMAT = {
+  '3x3': 3,
+  '5x5': 5,
+  maracana: 6,
+  '7x7': 7,
+  '11x11': 11,
+}
+
 /** Libellés d'affichage des formats (le maracana est LE format street en CI) */
 export const FORMAT_LABELS = {
   '3x3': '3x3',
