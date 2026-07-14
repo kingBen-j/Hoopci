@@ -664,3 +664,28 @@ footer.site a { color: var(--muted); }
   .onb { justify-content: center; }
   .onb-body { padding-bottom: 30px; }
 }
+
+/* ---------- Très petits écrans (iPhone 13 ≈ 390px et moins) ---------- */
+@media (max-width: 430px) {
+  /* Tuiles de stats : éviter que « 125 000 FCFA » ne déborde de la tuile */
+  .stat { padding: 12px 3px; }
+  .stat b { font-size: 18px; }
+  .stat span { font-size: 9px; letter-spacing: 0.4px; }
+
+  /* Formulaires : une seule colonne pour respirer (dates, sport/format, etc.) */
+  .row2 { grid-template-columns: 1fr; }
+
+  /* Héro : titre plus compact, un peu moins de hauteur */
+  .hero { padding: 26px 0 40px; }
+  .hero h1 { font-size: clamp(30px, 8.5vw, 40px); }
+  .hero p { font-size: 13.5px; }
+
+  /* Navigation basse : libellés plus petits pour tenir sur 6 colonnes */
+  .bottomnav { padding: 6px 2px calc(8px + env(safe-area-inset-bottom)); }
+  .nav-btn { font-size: 9px; letter-spacing: 0.2px; }
+  .nav-btn svg { width: 20px; height: 20px; }
+
+  /* Un peu moins de marge latérale pour gagner de la largeur utile */
+  .wrap { padding: 0 12px; }
+  .form-page { padding: 22px 12px; }
+}
