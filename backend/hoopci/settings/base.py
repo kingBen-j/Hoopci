@@ -16,7 +16,12 @@ try:
 except ImportError:
     pass
 
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+# Clé secrète : depuis l'environnement en priorité. À défaut, une clé aléatoire est
+# générée pour que l'app démarre quand même (déploiement sans config). ATTENTION :
+# une clé générée change à chaque redémarrage → les sessions/JWT sont invalidés.
+# En vraie production, TOUJOURS définir DJANGO_SECRET_KEY.
+from django.core.management.utils import get_random_secret_key  # noqa: E402
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or get_random_secret_key()
 
 # Chemin de l'admin Django — surchargé en production pour ne pas exposer /admin/
 # (les bots scannent ce chemin en permanence). Doit finir par « / ».

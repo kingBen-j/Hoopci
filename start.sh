@@ -9,4 +9,5 @@ export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-hoopci.settings.render}
 cd backend
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
-exec gunicorn hoopci.wsgi:application --bind "0.0.0.0:$PORT" --workers 2
+# WEB_CONCURRENCY est fixé par Render selon la RAM (1 sur le plan gratuit)
+exec gunicorn hoopci.wsgi:application --bind "0.0.0.0:$PORT" --workers "${WEB_CONCURRENCY:-2}"

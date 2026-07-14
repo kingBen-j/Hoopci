@@ -1,0 +1,8 @@
+{
+  "name": "hoopci",
+  "private": true,
+  "description": "Fait fonctionner la Start Command 'yarn start' / 'npm start' d'un service Render à Root Directory = racine : lance l'API Django via start.sh. Le chemin propre reste render.yaml (Blueprint).",
+  "scripts": {
+    "start": "bash start.sh"
+  }
+}

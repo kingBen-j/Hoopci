@@ -46,7 +46,19 @@ X_FRAME_OPTIONS = 'DENY'
 # Personnalisable via DJANGO_ADMIN_URL dans le dashboard Render.
 ADMIN_URL = os.environ.get('DJANGO_ADMIN_URL', 'gestion-hoopci-x7k2/')
 
-DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
+# Base de données : Postgres via DATABASE_URL (recommandé). À défaut, repli SQLite
+# pour que l'app démarre sans config — mais le disque Render est ÉPHÉMÈRE : les
+# données SQLite sont PERDUES à chaque redéploiement. Ajoute une base PostgreSQL
+# Render et sa DATABASE_URL dès que possible.
+if not os.environ.get('DATABASE_URL'):
+    import logging
+    logging.getLogger('django').warning(
+        'DATABASE_URL absent → SQLite ÉPHÉMÈRE (données perdues à chaque redéploiement). '
+        'Ajoute une base PostgreSQL Render et sa DATABASE_URL.'
+    )
+DATABASES = {'default': dj_database_url.config(
+    default=f"sqlite:///{BASE_DIR / 'render_fallback.db'}", conn_max_age=600,
+)}
 
 # WhiteNoise sert les statiques (admin Django) directement depuis gunicorn
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
