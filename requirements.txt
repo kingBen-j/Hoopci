@@ -1,0 +1,4 @@
+# Filet pour un service Render dont le Root Directory est la RACINE du dépôt.
+# (Le déploiement propre passe par render.yaml → rootDir backend → build.sh.)
+# Installe les dépendances de production du backend Django.
+-r backend/requirements/render.txt
