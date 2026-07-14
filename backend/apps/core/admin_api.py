@@ -89,19 +89,21 @@ class PaiementAdminSerializer(serializers.ModelSerializer):
     utilisateur_nom = serializers.SerializerMethodField()
     utilisateur_email = serializers.CharField(source='utilisateur.email', read_only=True)
     tournoi_titre = serializers.CharField(source='tournoi.titre', read_only=True, default=None)
+    equipe_nom = serializers.CharField(source='equipe.nom', read_only=True, default=None)
+    type_label = serializers.CharField(source='get_type_paiement_display', read_only=True)
 
     class Meta:
         model = Paiement
         fields = ('id', 'reference', 'genius_reference', 'utilisateur_nom', 'utilisateur_email',
-                  'tournoi', 'tournoi_titre', 'type_paiement', 'montant', 'devise',
-                  'statut', 'simulation', 'created_at')
+                  'tournoi', 'tournoi_titre', 'equipe_nom', 'type_paiement', 'type_label',
+                  'montant', 'devise', 'statut', 'simulation', 'created_at')
 
     def get_utilisateur_nom(self, obj):
         return obj.utilisateur.get_full_name() or obj.utilisateur.username
 
 
 class PaiementAdminViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Paiement.objects.select_related('utilisateur', 'tournoi').order_by('-created_at')
+    queryset = Paiement.objects.select_related('utilisateur', 'tournoi', 'equipe').order_by('-created_at')
     serializer_class = PaiementAdminSerializer
     permission_classes = [permissions.IsAdminUser]
     filterset_fields = ('statut', 'type_paiement', 'simulation')

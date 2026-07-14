@@ -1,0 +1,26 @@
+# Déploiement du dashboard admin HoopCI sur Netlify.
+# Renseigner VITE_API_URL (URL de l'API Django) dans Netlify :
+#   Site settings → Environment variables → VITE_API_URL = https://hoopci-backend.onrender.com
+# puis redéployer (le build Vite lit la variable).
+
+[build]
+  base = "admin-dashboard"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA : toutes les routes internes retombent sur index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# En-têtes de sécurité (le dashboard est un back-office sensible)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "same-origin"

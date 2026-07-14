@@ -46,6 +46,13 @@ export const STATUTS_EVENEMENT = {
 export const STATUTS_PAIEMENT = {
   en_attente: 'En attente', reussi: 'Réussi', echoue: 'Échoué', annule: 'Annulé', expire: 'Expiré',
 }
+export const TYPES_PAIEMENT = {
+  creation_tournoi: 'Publication tournoi',
+  publication_tournoi: 'Promotion tournoi',
+  inscription_equipe: 'Inscription équipe',
+  promotion_compte: 'Promotion compte',
+  promotion_equipe: 'Promotion équipe',
+}
 export const TYPES_EVENEMENT = {
   exhibition: 'Exhibition', camp: 'Camp', dunk_contest: 'Dunk contest',
   animation: 'Animation', caritatif: 'Caritatif', autre: 'Autre',

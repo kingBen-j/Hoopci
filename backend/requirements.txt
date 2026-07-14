@@ -1,0 +1,4 @@
+# Point d'entrée standard pour l'auto-détection Render/pip.
+# Les dépendances réelles sont dans requirements/render.txt (prod) ;
+# le vrai build passe par build.sh (pip + collectstatic + migrate).
+-r requirements/render.txt

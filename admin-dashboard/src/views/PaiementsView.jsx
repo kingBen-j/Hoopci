@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import {
   useApi, usePagine, Pagination, Pill, Spinner, Erreur,
-  fcfa, fmtDate, STATUTS_PAIEMENT, tonePaiement,
+  fcfa, fmtDate, STATUTS_PAIEMENT, TYPES_PAIEMENT, tonePaiement,
 } from '../ui.jsx'
 
-/** Suivi de tous les paiements GeniusPay : montants, statuts, mode. */
+/** Suivi de toutes les transactions GeniusPay : type, montants, statuts, mode. */
 export default function PaiementsView() {
   const [statut, setStatut] = useState('')
+  const [type, setType] = useState('')
   const stats = useApi('/admin/stats/')
-  const { rows, loading, error, page, setPage, hasNext, hasPrev } = usePagine(
-    '/admin/paiements/', statut ? { statut } : {},
-  )
+  const filtres = {}
+  if (statut) filtres.statut = statut
+  if (type) filtres.type_paiement = type
+  const { rows, loading, error, page, setPage, hasNext, hasPrev } = usePagine('/admin/paiements/', filtres)
 
   const p = stats.data?.paiements
 
@@ -26,10 +28,16 @@ export default function PaiementsView() {
       )}
 
       <div className="filtres">
-        <button className={`chip ${statut === '' ? 'actif' : ''}`} onClick={() => setStatut('')}>Tous</button>
+        <button className={`chip ${statut === '' ? 'actif' : ''}`} onClick={() => setStatut('')}>Tous statuts</button>
         {Object.entries(STATUTS_PAIEMENT).map(([k, v]) => (
           <button key={k} className={`chip ${statut === k ? 'actif' : ''}`} onClick={() => setStatut(k)}>{v}</button>
         ))}
+      </div>
+      <div className="filtres">
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          <option value="">Tous types de transaction</option>
+          {Object.entries(TYPES_PAIEMENT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
       </div>
 
       {loading && <Spinner />}
@@ -39,13 +47,13 @@ export default function PaiementsView() {
           <table>
             <thead>
               <tr>
-                <th>Référence</th><th>Client</th><th>Tournoi</th><th>Montant</th>
+                <th>Référence</th><th>Client</th><th>Type</th><th>Concerne</th><th>Montant</th>
                 <th>Statut</th><th>Mode</th><th>Date</th>
               </tr>
             </thead>
             <tbody>
               {rows.length === 0 && (
-                <tr><td colSpan={7} className="muted" style={{ textAlign: 'center', padding: 24 }}>Aucun paiement.</td></tr>
+                <tr><td colSpan={8} className="muted" style={{ textAlign: 'center', padding: 24 }}>Aucune transaction.</td></tr>
               )}
               {rows.map((r) => (
                 <tr key={r.id}>
@@ -54,7 +62,8 @@ export default function PaiementsView() {
                     {r.genius_reference && <span className="sous">{r.genius_reference}</span>}
                   </td>
                   <td>{r.utilisateur_nom}<span className="sous">{r.utilisateur_email}</span></td>
-                  <td>{r.tournoi_titre || <span className="muted">—</span>}</td>
+                  <td>{r.type_label || TYPES_PAIEMENT[r.type_paiement] || r.type_paiement}</td>
+                  <td>{r.equipe_nom || r.tournoi_titre || <span className="muted">—</span>}</td>
                   <td className="montant">{fcfa(r.montant)}</td>
                   <td><Pill tone={tonePaiement[r.statut]}>{STATUTS_PAIEMENT[r.statut] || r.statut}</Pill></td>
                   <td>{r.simulation ? <Pill tone="warn">Simulation</Pill> : <Pill tone="accent">GeniusPay</Pill>}</td>
