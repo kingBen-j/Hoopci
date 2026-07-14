@@ -19,7 +19,7 @@ services:
     healthCheckPath: /api/health/
     envVars:
       - key: PYTHON_VERSION
-        value: 3.13.4
+        value: 3.14.3
       - key: DJANGO_SETTINGS_MODULE
         value: hoopci.settings.render
       - key: DJANGO_SECRET_KEY
