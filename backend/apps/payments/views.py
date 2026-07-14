@@ -11,11 +11,13 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.db.models import F
+
 from apps.market.models import CarteTransfert
 from apps.players.tasks import recalculer_stats_joueur
 from apps.tournaments.models import Tournoi, Equipe
 from . import services
-from .models import Paiement
+from .models import Paiement, Portefeuille, MouvementPortefeuille
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +33,23 @@ def _appliquer_paiement(paiement):
             if equipe and not equipe.payee:
                 equipe.payee = True
                 equipe.save(update_fields=['payee'])
+            # L'inscription passe par la plateforme : elle prélève 500 FCFA et
+            # crédite le reste (les frais du tournoi) au portefeuille du promoteur.
+            tournoi = paiement.tournoi
+            part_promoteur = int(paiement.montant) - settings.TARIF_INSCRIPTION_EQUIPE
+            if tournoi and part_promoteur > 0:
+                portefeuille, _ = Portefeuille.objects.select_for_update().get_or_create(
+                    promoteur=tournoi.organisateur,
+                )
+                portefeuille.solde = F('solde') + part_promoteur
+                portefeuille.total_credite = F('total_credite') + part_promoteur
+                portefeuille.save(update_fields=['solde', 'total_credite', 'updated_at'])
+                libelle = f"Inscription « {equipe.nom} » — {tournoi.titre}" if equipe else tournoi.titre
+                MouvementPortefeuille.objects.create(
+                    portefeuille=portefeuille,
+                    type_mouvement=MouvementPortefeuille.TYPE_CREDIT_INSCRIPTION,
+                    montant=part_promoteur, paiement=paiement, libelle=libelle,
+                )
             return
         if paiement.type_paiement == Paiement.TYPE_PROMOTION_COMPTE:
             carte, _ = CarteTransfert.objects.get_or_create(joueur=paiement.utilisateur)
@@ -277,6 +296,30 @@ class InitierPromotionEquipeView(APIView):
             'equipe_id': equipe.id,
             'equipe_nom': equipe.nom,
             'tournoi_titre': equipe.tournoi.titre,
+        })
+
+
+class PortefeuilleView(APIView):
+    """GET /api/payments/portefeuille/ — solde et mouvements du promoteur connecté."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != 'promoteur':
+            return Response({'detail': 'Réservé aux promoteurs.'}, status=status.HTTP_403_FORBIDDEN)
+        portefeuille, _ = Portefeuille.objects.get_or_create(promoteur=request.user)
+        mouvements = portefeuille.mouvements.select_related('paiement')[:100]
+        return Response({
+            'solde': int(portefeuille.solde),
+            'total_credite': int(portefeuille.total_credite),
+            'total_reverse': int(portefeuille.total_reverse),
+            'part_plateforme': settings.TARIF_INSCRIPTION_EQUIPE,
+            'mouvements': [{
+                'id': m.id,
+                'type': m.type_mouvement,
+                'montant': int(m.montant),
+                'libelle': m.libelle,
+                'created_at': m.created_at,
+            } for m in mouvements],
         })
 
 

@@ -39,7 +39,12 @@ export default function DashboardPage() {
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <span className="kicker orange">Espace promoteur</span>
-      <h1 style={{ fontSize: 32, marginTop: 10 }}>Mes tournois</h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <h1 style={{ fontSize: 32, marginTop: 10 }}>Mes tournois</h1>
+        <Link to="/portefeuille" className="btn sm dark" style={{ display: 'inline-flex' }}>
+          <span><Wallet size={14} /> Mon portefeuille</span>
+        </Link>
+      </div>
 
       <div className="stats-row" style={{ gridTemplateColumns: 'repeat(2, 1fr)', maxWidth: 380 }}>
         <div className="stat"><b>{tournois.length}</b><span>Tournois</span></div>

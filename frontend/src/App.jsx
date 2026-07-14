@@ -25,6 +25,7 @@ import RetourPaiementPage from './pages/paiement/RetourPaiementPage.jsx'
 import OffresPage from './pages/OffresPage.jsx'
 import FavorisPage from './pages/FavorisPage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
+import PortefeuillePage from './pages/PortefeuillePage.jsx'
 
 export default function App() {
   const user = useAuthStore((s) => s.user)
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="creer" element={<CreerTournoiPage />} />
             <Route path="mes-tournois" element={<DashboardPage />} />
             <Route path="creer-evenement" element={<CreerEvenementPage />} />
+            <Route path="portefeuille" element={<PortefeuillePage />} />
           </Route>
 
           {/* Promotion payante d'un tournoi (promoteur) */}

@@ -12,6 +12,9 @@ export const promouvoirEquipe = (equipeId) =>
 export const initierPromotionCompte = () =>
   client.post('/payments/carte/initier/')
 
+export const getPortefeuille = () =>
+  client.get('/payments/portefeuille/')
+
 export const getStatutPaiement = (reference) =>
   client.get(`/payments/${reference}/`)
 

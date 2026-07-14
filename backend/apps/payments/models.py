@@ -82,3 +82,54 @@ class Paiement(models.Model):
 
     def __str__(self):
         return f"{self.reference} — {self.montant} {self.devise} ({self.statut})"
+
+
+class Portefeuille(models.Model):
+    """
+    Portefeuille d'un promoteur. Les frais d'inscription des équipes (montant payé
+    moins la part plateforme de 500 FCFA) y sont crédités automatiquement. Le solde
+    représente ce que la plateforme doit reverser au promoteur.
+    """
+    promoteur = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='portefeuille',
+        limit_choices_to={'role': 'promoteur'},
+    )
+    solde = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    # Cumul historique crédité (ne diminue jamais) — utile pour les statistiques
+    total_credite = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    total_reverse = models.DecimalField(max_digits=12, decimal_places=0, default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Portefeuille'
+
+    def __str__(self):
+        return f"Portefeuille de {self.promoteur} — {self.solde} XOF"
+
+
+class MouvementPortefeuille(models.Model):
+    """Ligne de mouvement d'un portefeuille : crédit d'inscription ou reversement."""
+    TYPE_CREDIT_INSCRIPTION = 'credit_inscription'
+    TYPE_REVERSEMENT = 'reversement'
+    TYPE_CHOICES = [
+        (TYPE_CREDIT_INSCRIPTION, "Crédit d'inscription"),
+        (TYPE_REVERSEMENT, 'Reversement'),
+    ]
+
+    portefeuille = models.ForeignKey(Portefeuille, on_delete=models.CASCADE, related_name='mouvements')
+    type_mouvement = models.CharField(max_length=20, choices=TYPE_CHOICES)
+    # Signé : positif pour un crédit, négatif pour un reversement
+    montant = models.DecimalField(max_digits=12, decimal_places=0)
+    paiement = models.ForeignKey(Paiement, on_delete=models.SET_NULL, null=True, blank=True, related_name='mouvements')
+    libelle = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Mouvement de portefeuille'
+        verbose_name_plural = 'Mouvements de portefeuille'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.get_type_mouvement_display()} {self.montant} — {self.portefeuille.promoteur}"

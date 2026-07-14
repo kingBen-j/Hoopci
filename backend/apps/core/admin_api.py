@@ -14,7 +14,7 @@ from apps.accounts.models import Utilisateur
 from apps.tournaments.models import Tournoi, Equipe, Participation
 from apps.events.models import Evenement, InteretEvenement
 from apps.market.models import CarteTransfert, Offre, RechercheRecruteur
-from apps.payments.models import Paiement
+from apps.payments.models import Paiement, Portefeuille, MouvementPortefeuille
 from apps.players.models import ProfilJoueur
 from apps.players.tasks import recalculer_stats_joueur
 
@@ -304,3 +304,52 @@ class ProfilJoueurAdminViewSet(viewsets.ReadOnlyModelViewSet):
         recalculer_stats_joueur(profil.utilisateur_id)
         profil.refresh_from_db()
         return Response(self.get_serializer(profil).data)
+
+
+# ---------- Portefeuilles des promoteurs (frais d'inscription à reverser) ----------
+
+class PortefeuilleAdminSerializer(serializers.ModelSerializer):
+    promoteur_nom = serializers.SerializerMethodField()
+    promoteur_email = serializers.CharField(source='promoteur.email', read_only=True)
+
+    class Meta:
+        model = Portefeuille
+        fields = ('id', 'promoteur', 'promoteur_nom', 'promoteur_email',
+                  'solde', 'total_credite', 'total_reverse', 'updated_at')
+        read_only_fields = fields
+
+    def get_promoteur_nom(self, obj):
+        return obj.promoteur.get_full_name() or obj.promoteur.username
+
+
+class PortefeuilleAdminViewSet(viewsets.ReadOnlyModelViewSet):
+    """Soldes dus aux promoteurs + enregistrement des reversements."""
+    queryset = Portefeuille.objects.select_related('promoteur').order_by('-solde')
+    serializer_class = PortefeuilleAdminSerializer
+    permission_classes = [permissions.IsAdminUser]
+    search_fields = ('promoteur__email', 'promoteur__first_name', 'promoteur__last_name')
+
+    @decorators.action(detail=True, methods=['post'])
+    def reverser(self, request, pk=None):
+        """Enregistre un reversement au promoteur (diminue le solde dû)."""
+        from django.db.models import F
+        portefeuille = self.get_object()
+        try:
+            montant = int(request.data.get('montant', 0))
+        except (TypeError, ValueError):
+            montant = 0
+        if montant <= 0:
+            return Response({'detail': 'Montant invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        if montant > portefeuille.solde:
+            return Response({'detail': 'Montant supérieur au solde dû.'}, status=status.HTTP_400_BAD_REQUEST)
+        portefeuille.solde = F('solde') - montant
+        portefeuille.total_reverse = F('total_reverse') + montant
+        portefeuille.save(update_fields=['solde', 'total_reverse', 'updated_at'])
+        MouvementPortefeuille.objects.create(
+            portefeuille=portefeuille,
+            type_mouvement=MouvementPortefeuille.TYPE_REVERSEMENT,
+            montant=-montant,
+            libelle=request.data.get('libelle', 'Reversement au promoteur'),
+        )
+        portefeuille.refresh_from_db()
+        return Response(self.get_serializer(portefeuille).data)
