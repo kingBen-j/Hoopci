@@ -15,6 +15,9 @@ export const initierPromotionCompte = () =>
 export const getPortefeuille = () =>
   client.get('/payments/portefeuille/')
 
+export const demanderRetrait = (montant, numero) =>
+  client.post('/payments/portefeuille/', { montant, numero })
+
 export const getStatutPaiement = (reference) =>
   client.get(`/payments/${reference}/`)
 

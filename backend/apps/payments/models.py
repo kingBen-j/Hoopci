@@ -133,3 +133,35 @@ class MouvementPortefeuille(models.Model):
 
     def __str__(self):
         return f"{self.get_type_mouvement_display()} {self.montant} — {self.portefeuille.promoteur}"
+
+
+class DemandeRetrait(models.Model):
+    """
+    Demande de retrait d'un promoteur : il récolte l'argent accumulé dans son
+    portefeuille vers son numéro Mobile Money. Traitée par la plateforme
+    (versement GeniusPay ou manuel), ce qui débite le portefeuille.
+    """
+    STATUT_EN_ATTENTE = 'en_attente'
+    STATUT_TRAITE = 'traite'
+    STATUT_REJETE = 'rejete'
+    STATUT_CHOICES = [
+        (STATUT_EN_ATTENTE, 'En attente'),
+        (STATUT_TRAITE, 'Traité'),
+        (STATUT_REJETE, 'Rejeté'),
+    ]
+
+    portefeuille = models.ForeignKey(Portefeuille, on_delete=models.CASCADE, related_name='demandes_retrait')
+    montant = models.DecimalField(max_digits=12, decimal_places=0)
+    numero = models.CharField(max_length=20, help_text='Numéro Mobile Money du promoteur')
+    statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default=STATUT_EN_ATTENTE, db_index=True)
+    note = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    traite_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Demande de retrait'
+        verbose_name_plural = 'Demandes de retrait'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Retrait {self.montant} — {self.portefeuille.promoteur} ({self.statut})"

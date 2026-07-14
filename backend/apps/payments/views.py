@@ -17,7 +17,7 @@ from apps.market.models import CarteTransfert
 from apps.players.tasks import recalculer_stats_joueur
 from apps.tournaments.models import Tournoi, Equipe
 from . import services
-from .models import Paiement, Portefeuille, MouvementPortefeuille
+from .models import Paiement, Portefeuille, MouvementPortefeuille, DemandeRetrait
 
 logger = logging.getLogger(__name__)
 
@@ -300,7 +300,10 @@ class InitierPromotionEquipeView(APIView):
 
 
 class PortefeuilleView(APIView):
-    """GET /api/payments/portefeuille/ — solde et mouvements du promoteur connecté."""
+    """
+    GET  /api/payments/portefeuille/ — solde, mouvements et retraits du promoteur.
+    POST /api/payments/portefeuille/ — demander un retrait { montant, numero }.
+    """
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -308,8 +311,12 @@ class PortefeuilleView(APIView):
             return Response({'detail': 'Réservé aux promoteurs.'}, status=status.HTTP_403_FORBIDDEN)
         portefeuille, _ = Portefeuille.objects.get_or_create(promoteur=request.user)
         mouvements = portefeuille.mouvements.select_related('paiement')[:100]
+        retraits = portefeuille.demandes_retrait.all()[:50]
+        # Montant déjà bloqué par des demandes en attente
+        en_attente = sum(int(r.montant) for r in retraits if r.statut == DemandeRetrait.STATUT_EN_ATTENTE)
         return Response({
             'solde': int(portefeuille.solde),
+            'disponible': int(portefeuille.solde) - en_attente,
             'total_credite': int(portefeuille.total_credite),
             'total_reverse': int(portefeuille.total_reverse),
             'part_plateforme': settings.TARIF_INSCRIPTION_EQUIPE,
@@ -320,7 +327,38 @@ class PortefeuilleView(APIView):
                 'libelle': m.libelle,
                 'created_at': m.created_at,
             } for m in mouvements],
+            'retraits': [{
+                'id': r.id,
+                'montant': int(r.montant),
+                'numero': r.numero,
+                'statut': r.statut,
+                'note': r.note,
+                'created_at': r.created_at,
+            } for r in retraits],
         })
+
+    def post(self, request):
+        if request.user.role != 'promoteur':
+            return Response({'detail': 'Réservé aux promoteurs.'}, status=status.HTTP_403_FORBIDDEN)
+        portefeuille, _ = Portefeuille.objects.get_or_create(promoteur=request.user)
+        try:
+            montant = int(request.data.get('montant', 0))
+        except (TypeError, ValueError):
+            montant = 0
+        numero = (request.data.get('numero') or '').strip()
+        if montant <= 0:
+            return Response({'montant': 'Montant invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not numero:
+            return Response({'numero': 'Numéro Mobile Money requis.'}, status=status.HTTP_400_BAD_REQUEST)
+        # On ne peut pas demander plus que le solde disponible (hors demandes en attente)
+        deja_demande = sum(
+            int(r.montant) for r in portefeuille.demandes_retrait.filter(statut=DemandeRetrait.STATUT_EN_ATTENTE)
+        )
+        if montant > int(portefeuille.solde) - deja_demande:
+            return Response({'montant': 'Montant supérieur au solde disponible.'}, status=status.HTTP_400_BAD_REQUEST)
+        demande = DemandeRetrait.objects.create(portefeuille=portefeuille, montant=montant, numero=numero)
+        return Response({'id': demande.id, 'montant': int(demande.montant), 'statut': demande.statut},
+                        status=status.HTTP_201_CREATED)
 
 
 class StatutPaiementView(APIView):

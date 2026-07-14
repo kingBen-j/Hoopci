@@ -4,7 +4,7 @@ from .admin_api import (
     StatsAdminView, PaiementAdminViewSet, UtilisateurAdminViewSet,
     TournoiAdminViewSet, EvenementAdminViewSet, CarteAdminViewSet,
     EquipeAdminViewSet, OffreAdminViewSet, ProfilJoueurAdminViewSet,
-    PortefeuilleAdminViewSet,
+    PortefeuilleAdminViewSet, DemandeRetraitAdminViewSet,
 )
 
 router = DefaultRouter()
@@ -17,6 +17,7 @@ router.register(r'equipes', EquipeAdminViewSet, basename='admin-equipe')
 router.register(r'offres', OffreAdminViewSet, basename='admin-offre')
 router.register(r'joueurs', ProfilJoueurAdminViewSet, basename='admin-joueur')
 router.register(r'portefeuilles', PortefeuilleAdminViewSet, basename='admin-portefeuille')
+router.register(r'retraits', DemandeRetraitAdminViewSet, basename='admin-retrait')
 
 urlpatterns = [
     path('stats/', StatsAdminView.as_view(), name='admin-stats'),

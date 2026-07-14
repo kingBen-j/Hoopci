@@ -14,7 +14,7 @@ from apps.accounts.models import Utilisateur
 from apps.tournaments.models import Tournoi, Equipe, Participation
 from apps.events.models import Evenement, InteretEvenement
 from apps.market.models import CarteTransfert, Offre, RechercheRecruteur
-from apps.payments.models import Paiement, Portefeuille, MouvementPortefeuille
+from apps.payments.models import Paiement, Portefeuille, MouvementPortefeuille, DemandeRetrait
 from apps.players.models import ProfilJoueur
 from apps.players.tasks import recalculer_stats_joueur
 
@@ -353,3 +353,68 @@ class PortefeuilleAdminViewSet(viewsets.ReadOnlyModelViewSet):
         )
         portefeuille.refresh_from_db()
         return Response(self.get_serializer(portefeuille).data)
+
+
+# ---------- Demandes de retrait des promoteurs ----------
+
+class DemandeRetraitAdminSerializer(serializers.ModelSerializer):
+    promoteur_nom = serializers.SerializerMethodField()
+    promoteur_email = serializers.CharField(source='portefeuille.promoteur.email', read_only=True)
+    solde = serializers.IntegerField(source='portefeuille.solde', read_only=True)
+
+    class Meta:
+        model = DemandeRetrait
+        fields = ('id', 'promoteur_nom', 'promoteur_email', 'solde', 'montant',
+                  'numero', 'statut', 'note', 'created_at', 'traite_at')
+
+    def get_promoteur_nom(self, obj):
+        u = obj.portefeuille.promoteur
+        return u.get_full_name() or u.username
+
+
+class DemandeRetraitAdminViewSet(viewsets.ReadOnlyModelViewSet):
+    """Demandes de retrait : traiter (débite le portefeuille) ou rejeter."""
+    queryset = DemandeRetrait.objects.select_related('portefeuille__promoteur').order_by('-created_at')
+    serializer_class = DemandeRetraitAdminSerializer
+    permission_classes = [permissions.IsAdminUser]
+    filterset_fields = ('statut',)
+    search_fields = ('portefeuille__promoteur__email', 'numero')
+
+    @decorators.action(detail=True, methods=['post'])
+    def traiter(self, request, pk=None):
+        """Marque la demande comme payée et débite le portefeuille du promoteur."""
+        from django.db.models import F
+        from django.utils import timezone
+        demande = self.get_object()
+        if demande.statut != DemandeRetrait.STATUT_EN_ATTENTE:
+            return Response({'detail': 'Demande déjà traitée.'}, status=status.HTTP_400_BAD_REQUEST)
+        portefeuille = demande.portefeuille
+        if demande.montant > portefeuille.solde:
+            return Response({'detail': 'Solde insuffisant.'}, status=status.HTTP_400_BAD_REQUEST)
+        portefeuille.solde = F('solde') - demande.montant
+        portefeuille.total_reverse = F('total_reverse') + demande.montant
+        portefeuille.save(update_fields=['solde', 'total_reverse', 'updated_at'])
+        MouvementPortefeuille.objects.create(
+            portefeuille=portefeuille,
+            type_mouvement=MouvementPortefeuille.TYPE_REVERSEMENT,
+            montant=-demande.montant,
+            libelle=f"Retrait vers {demande.numero}",
+        )
+        demande.statut = DemandeRetrait.STATUT_TRAITE
+        demande.traite_at = timezone.now()
+        demande.note = request.data.get('note', '')
+        demande.save(update_fields=['statut', 'traite_at', 'note'])
+        return Response(self.get_serializer(demande).data)
+
+    @decorators.action(detail=True, methods=['post'])
+    def rejeter(self, request, pk=None):
+        """Rejette la demande (aucun débit)."""
+        from django.utils import timezone
+        demande = self.get_object()
+        if demande.statut != DemandeRetrait.STATUT_EN_ATTENTE:
+            return Response({'detail': 'Demande déjà traitée.'}, status=status.HTTP_400_BAD_REQUEST)
+        demande.statut = DemandeRetrait.STATUT_REJETE
+        demande.traite_at = timezone.now()
+        demande.note = request.data.get('note', '')
+        demande.save(update_fields=['statut', 'traite_at', 'note'])
+        return Response(self.get_serializer(demande).data)

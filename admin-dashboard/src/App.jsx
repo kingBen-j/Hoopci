@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   LayoutDashboard, Wallet, Users, Trophy, CalendarRange, BadgeCheck, LogOut,
-  Shield, Mail, Medal, Banknote,
+  Shield, Mail, Medal, Banknote, HandCoins,
 } from 'lucide-react'
 import api, { API_URL, getTokens, setTokens, clearTokens, apiError } from './api.js'
 import { Spinner } from './ui.jsx'
@@ -15,11 +15,13 @@ import EquipesView from './views/EquipesView.jsx'
 import OffresView from './views/OffresView.jsx'
 import JoueursView from './views/JoueursView.jsx'
 import PortefeuillesView from './views/PortefeuillesView.jsx'
+import RetraitsView from './views/RetraitsView.jsx'
 
 const ONGLETS = [
   { id: 'apercu', label: "Vue d'ensemble", icon: LayoutDashboard, vue: OverviewView },
   { id: 'paiements', label: 'Paiements', icon: Wallet, vue: PaiementsView },
   { id: 'portefeuilles', label: 'Portefeuilles', icon: Banknote, vue: PortefeuillesView },
+  { id: 'retraits', label: 'Retraits', icon: HandCoins, vue: RetraitsView },
   { id: 'utilisateurs', label: 'Utilisateurs', icon: Users, vue: UtilisateursView },
   { id: 'tournois', label: 'Tournois', icon: Trophy, vue: TournoisView },
   { id: 'equipes', label: 'Équipes', icon: Shield, vue: EquipesView },
