@@ -32,4 +32,18 @@ try:
 except Exception as exc:  # pragma: no cover - ne pas empêcher le démarrage
     logging.getLogger("django").warning("Préparation au démarrage impossible : %s", exc)
 
+# Compte admin initial (optionnel) : créé si les variables DJANGO_SUPERUSER_* sont
+# présentes et qu'aucun compte avec cet e-mail n'existe. Nécessite EMAIL, PASSWORD,
+# USERNAME et ROLE (le modèle Utilisateur exige username + role). À retirer après
+# le premier déploiement une fois le compte créé.
+if os.environ.get("DJANGO_SUPERUSER_EMAIL") and os.environ.get("DJANGO_SUPERUSER_PASSWORD"):
+    try:
+        from django.contrib.auth import get_user_model
+
+        if not get_user_model().objects.filter(email=os.environ["DJANGO_SUPERUSER_EMAIL"]).exists():
+            call_command("createsuperuser", "--noinput")
+            logging.getLogger("django").warning("Compte admin initial créé.")
+    except Exception as exc:  # pragma: no cover
+        logging.getLogger("django").warning("Création du compte admin impossible : %s", exc)
+
 from hoopci.wsgi import application  # noqa: E402,F401  (chargé par gunicorn)
